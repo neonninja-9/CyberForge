@@ -1,0 +1,203 @@
+.lab-page {
+  padding: var(--space-xl) var(--space-xxl);
+  min-height: calc(100vh - var(--nav-height));
+}
+
+.lab-layout-panels {
+  display: flex;
+  height: 100%;
+  min-height: calc(100vh - var(--nav-height) - 4rem);
+}
+
+.resize-handle {
+  width: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: col-resize;
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+.resize-handle-inner {
+  width: 4px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-steel);
+  transition: all var(--transition-fast);
+}
+
+.resize-handle:hover .resize-handle-inner,
+.resize-handle[data-resize-handle-state="drag"] .resize-handle-inner {
+  background-color: var(--color-primary);
+  color: white;
+  height: 48px;
+  width: 6px;
+}
+
+.lab-info, .lab-viz, .lab-playground {
+  position: static;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+
+.lab-params .grid-2 {
+  gap: var(--space-base);
+}
+
+.lab-output {
+  margin-top: var(--space-xs);
+}
+
+/* Algorithm Steps */
+.algo-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-base);
+}
+
+.algo-step {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-soft);
+}
+
+.algo-step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-circle);
+  background-color: var(--color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Complexity */
+.algo-complexity {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.complexity-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--color-hairline-soft);
+}
+
+.complexity-row:last-child { border-bottom: none; }
+
+/* Visualization */
+.viz-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-circle);
+  background-color: var(--color-success);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.viz-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+
+.viz-step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-base);
+  position: relative;
+  color: var(--color-stone);
+  transition: all var(--transition-fast);
+}
+
+.viz-step::before {
+  content: '';
+  position: absolute;
+  left: 22px;
+  top: 100%;
+  width: 2px;
+  height: var(--space-md);
+  background-color: var(--color-hairline);
+}
+
+.viz-step:last-child::before { display: none; }
+
+.viz-step-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-circle);
+  border: 2px solid var(--color-hairline);
+  background-color: var(--color-canvas);
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.viz-step.active {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.viz-step.active .viz-step-dot {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+  box-shadow: 0 0 0 4px var(--color-primary-tint);
+}
+
+.viz-step.done .viz-step-dot {
+  border-color: var(--color-success);
+  background-color: var(--color-success);
+}
+
+.viz-step.done {
+  color: var(--color-ink);
+}
+
+.viz-step.done::before {
+  background-color: var(--color-success);
+}
+
+/* Encrypting animation */
+.encrypting { opacity: 0.8; }
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 1200px) {
+  .lab-layout-panels {
+    flex-direction: column !important;
+  }
+  .resize-handle {
+    width: 100%;
+    height: 16px;
+    cursor: row-resize;
+  }
+  .resize-handle-inner {
+    height: 4px;
+    width: 32px;
+    flex-direction: row;
+  }
+  .resize-handle:hover .resize-handle-inner,
+  .resize-handle[data-resize-handle-state="drag"] .resize-handle-inner {
+    width: 48px;
+    height: 6px;
+  }
+}

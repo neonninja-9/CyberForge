@@ -1,0 +1,100 @@
+.explore-page {
+  padding: var(--space-xxl) 0 var(--space-section);
+}
+
+.explore-search-wrap {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto var(--space-xl);
+}
+
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-steel);
+  pointer-events: none;
+}
+
+.explore-search {
+  width: 100%;
+}
+
+.explore-filters {
+  justify-content: center;
+  margin-bottom: var(--space-xxl);
+}
+
+.explore-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: var(--space-xxl);
+  align-items: start;
+}
+
+.explore-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-xl);
+}
+
+.algo-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-base);
+}
+
+.algo-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.algo-card-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.algo-card-difficulty {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.algo-card-desc {
+  color: var(--color-steel);
+  flex-grow: 1;
+}
+
+.algo-card-btn {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+.explore-sidebar {
+  position: sticky;
+  top: calc(var(--nav-height) + var(--space-xl));
+}
+
+.sidebar-stat + .sidebar-stat {
+  border-top: 1px solid var(--color-hairline-soft);
+  padding-top: var(--space-base);
+}
+
+.explore-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--space-section);
+}
+
+@media (max-width: 1023px) {
+  .explore-layout {
+    grid-template-columns: 1fr;
+  }
+  .explore-sidebar {
+    position: static;
+  }
+}

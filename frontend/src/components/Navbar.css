@@ -1,0 +1,94 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: var(--nav-height);
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--color-hairline-soft);
+}
+
+.navbar-inner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xl);
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-ink-deep);
+  letter-spacing: -0.5px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.navbar-logo:hover {
+  color: var(--color-ink-deep);
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+  .navbar .pill-tabs {
+    display: none;
+  }
+}
+
+/* ---- Transparent Mode (Landing Page) ---- */
+.navbar-transparent {
+  background-color: rgba(10, 19, 23, 0.2); /* slight dark tint to show blur */
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.navbar-transparent .navbar-logo {
+  color: var(--color-canvas);
+}
+
+.navbar-transparent .pill-tab {
+  color: rgba(255, 255, 255, 0.8);
+  background-color: transparent;
+  border-color: transparent; /* non-panel mode: no visible borders */
+}
+
+.navbar-transparent .pill-tab:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-canvas);
+}
+
+.navbar-transparent .pill-tab.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: var(--color-canvas);
+  border-color: transparent;
+  box-shadow: none; /* remove panel look */
+}
+
+.navbar-transparent .btn-primary {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-canvas);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+}
+
+.navbar-transparent .btn-primary:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}

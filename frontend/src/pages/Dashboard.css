@@ -1,0 +1,134 @@
+.dashboard-page {
+  padding: var(--space-xxl) 0 var(--space-section);
+}
+
+.dash-profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-xxl);
+}
+
+.dash-profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.dash-xp-bar {
+  max-width: 600px;
+  margin-bottom: var(--space-xxl);
+}
+
+.dash-stats {
+  margin-bottom: var(--space-section-sm);
+}
+
+.dash-stat-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.dash-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-elevated);
+  transition: all var(--transition-base);
+}
+
+.dash-stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-xl);
+  background-color: var(--color-primary-tint);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-md);
+}
+
+.dash-section {
+  margin-bottom: var(--space-section-sm);
+}
+
+/* Achievements */
+.achievements-row {
+  display: flex;
+  gap: var(--space-xl);
+  overflow-x: auto;
+  padding-bottom: var(--space-base);
+  scrollbar-width: none;
+}
+
+.achievements-row::-webkit-scrollbar { display: none; }
+
+.achievement-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.achievement-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-circle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-fast);
+}
+
+.achievement-badge:hover .achievement-icon {
+  transform: scale(1.1);
+}
+
+.achievement-badge.locked .achievement-icon {
+  background-color: var(--color-surface-soft);
+  color: var(--color-stone);
+}
+
+.achievement-badge.locked {
+  opacity: 0.5;
+}
+
+/* Leaderboard */
+.leaderboard-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard-table th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-steel);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: var(--space-md) var(--space-base);
+  border-bottom: 1px solid var(--color-hairline-soft);
+}
+
+.leaderboard-table td {
+  padding: var(--space-md) var(--space-base);
+  font-size: 14px;
+  border-bottom: 1px solid var(--color-hairline-soft);
+}
+
+.leaderboard-table tr:last-child td { border-bottom: none; }
+
+.leaderboard-table .you-row {
+  background-color: var(--color-primary-tint);
+}
+
+.leaderboard-table .you-row td {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+@media (max-width: 767px) {
+  .dash-profile { flex-direction: column; text-align: center; }
+  .dash-xp-bar { max-width: 100%; }
+}
