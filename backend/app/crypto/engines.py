@@ -842,6 +842,167 @@ def playfair_encrypt(plaintext: str, key: str = "KEY") -> dict:
         "key": key,
         "algorithm": "Playfair Cipher",
     }
+# — Playfair Cipher Decryption ————————————————————————————————
+
+def playfair_decrypt(ciphertext: str, key: str = "KEY") -> dict:
+
+    result = ""
+
+    # Prepare ciphertext
+    ciphertext = ciphertext.upper()
+    ciphertext = ciphertext.replace("J", "I")
+
+    # Prepare key
+    key = key.upper()
+    key = key.replace("J", "I")
+
+    # Remove non-alphabet characters
+    ciphertext = "".join(ch for ch in ciphertext if ch.isalpha())
+
+    # Remove duplicate letters from key
+    for ch in key:
+
+        if ch not in result and ch.isalpha():
+            result += ch
+
+    # Fill remaining alphabets
+    for ch in "ABCDEFGHIKLMNOPQRSTUVWXYZ":
+
+        if ch not in result:
+            result += ch
+
+    # Create 5x5 matrix
+    matrix = []
+
+    for i in range(0, 25, 5):
+
+        row = []
+
+        for j in range(i, i + 5):
+            row.append(result[j])
+
+        matrix.append(row)
+
+    # Decryption rules
+    def decryption_rules(l1, l2):
+
+        for i in range(5):
+            for j in range(5):
+
+                if matrix[i][j] == l1:
+                    row1 = i
+                    column1 = j
+
+                if matrix[i][j] == l2:
+                    row2 = i
+                    column2 = j
+
+        # Same row
+        if row1 == row2:
+
+            column1 = (column1 - 1) % 5
+            column2 = (column2 - 1) % 5
+
+        # Same column
+        elif column1 == column2:
+
+            row1 = (row1 - 1) % 5
+            row2 = (row2 - 1) % 5
+
+        # Rectangle swap
+        else:
+
+            variable = column1
+            column1 = column2
+            column2 = variable
+
+        new1 = matrix[row1][column1]
+        new2 = matrix[row2][column2]
+
+        return new1 + new2
+
+    # Generate plaintext
+    plain_text = ""
+
+    for i in range(0, len(ciphertext), 2):
+
+        l1 = ciphertext[i]
+        l2 = ciphertext[i + 1]
+
+        plain_text += decryption_rules(l1, l2)
+
+    return {
+        "plaintext": plain_text,
+        "key": key,
+        "algorithm": "Playfair Cipher Decryption",
+    }
+# — Autokey Cipher Decryption ————————————————————————————————
+
+def autokey_decrypt(ciphertext: str, key: str = "KEY") -> dict:
+
+    result = []
+    key_stream = key
+
+    for i in range(len(ciphertext)):
+
+        char = ciphertext[i]
+
+        # Keep spaces unchanged
+        if char == " ":
+
+            result.append(" ")
+            continue
+
+        # Ignore special characters
+        if not char.isalpha() and not char.isnumeric() and not char.isspace():
+            continue
+
+        current_key = key_stream[i]
+
+        # Decrypt uppercase letters
+        if char.isupper():
+
+            element = ord(char) - ord('A')
+
+            if current_key.isupper():
+                key_value = ord(current_key) - ord('A')
+            else:
+                key_value = ord(current_key) - ord('a')
+
+            decrypted = chr((element - key_value) % 26 + ord('A'))
+
+            result.append(decrypted)
+
+            # Add decrypted text to key stream
+            key_stream += decrypted
+
+        # Decrypt lowercase letters
+        elif char.islower():
+
+            element = ord(char) - ord('a')
+
+            if current_key.isupper():
+                key_value = ord(current_key) - ord('A')
+            else:
+                key_value = ord(current_key) - ord('a')
+
+            decrypted = chr((element - key_value) % 26 + ord('a'))
+
+            result.append(decrypted)
+
+            # Add decrypted text to key stream
+            key_stream += decrypted
+
+        # Keep numbers unchanged
+        else:
+
+            result.append(char)
+
+    return {
+        "plaintext": "".join(result),
+        "key": key,
+        "algorithm": "Autokey Cipher Decryption",
+    }
 # ── railfence─────────────────────────────────────────────────
 def railfence(text: str, key: int) -> dict:
     """Implement Rail Fence Cipher logic here."""
