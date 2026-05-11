@@ -57,6 +57,11 @@ Thumbs.db
 
 # Databases
 *.sqlite3
+backend/*.sql
 
 # Vite
 *.timestamp-*
+
+# Documentation
+DESIGN.md
+backend/app/crypto/changes.md

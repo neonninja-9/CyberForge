@@ -1,7 +1,12 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 
-const AuthContext = createContext({ user: null, session: null, loading: true })
+const AuthContext = createContext({
+  user: null,
+  session: null,
+  loading: true,
+  signOut: async () => {},
+})
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
@@ -9,24 +14,34 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Get the initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
+    // Listen for auth state changes (login, logout, token refresh, OAuth callback)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session)
+        setUser(session?.user ?? null)
+        setLoading(false)
+      }
+    )
 
     return () => subscription.unsubscribe()
   }, [])
 
+  const signOut = useCallback(async () => {
+    await supabase.auth.signOut()
+    setUser(null)
+    setSession(null)
+  }, [])
+
   return (
-    <AuthContext.Provider value={{ user, session, loading }}>
-      {!loading && children}
+    <AuthContext.Provider value={{ user, session, loading, signOut }}>
+      {children}
     </AuthContext.Provider>
   )
 }

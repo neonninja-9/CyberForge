@@ -92,3 +92,45 @@
   background-color: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.4);
 }
+
+/* User Button */
+.navbar-user-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.navbar-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-hairline-soft);
+}
+
+.navbar-user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.navbar-transparent .navbar-user-name {
+  color: var(--color-canvas);
+}
+
+.navbar-transparent .navbar-avatar {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.navbar-transparent .btn-ghost {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.navbar-transparent .btn-ghost:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-canvas);
+}

@@ -4,7 +4,7 @@ from typing import Optional
 from app.crypto.registry import ALGORITHMS
 import inspect
 
-router = APIRouter()
+router = APIRouter(redirect_slashes=False)
 
 
 class ExecuteRequest(BaseModel):
@@ -17,6 +17,7 @@ class AlgorithmCodeRequest(BaseModel):
     algorithm_id: str
 
 
+@router.get("")
 @router.get("/")
 async def list_algorithms():
     """List all available cryptographic algorithms."""

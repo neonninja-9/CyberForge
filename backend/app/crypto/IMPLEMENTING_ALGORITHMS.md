@@ -1,120 +1,92 @@
-# Implementing Algorithms
+# Adding a New Algorithm
 
 This folder contains the backend algorithm engine layer for CryptoForge.
 
-- `engines.py` contains the actual Python functions for each algorithm.
-- `registry.py` exposes algorithm metadata and connects each algorithm id to its engine function.
-- The Explore page calls `GET /api/algorithms`, which returns data from `registry.py`.
+## Architecture
 
-If an algorithm is implemented in `engines.py` but not registered in `registry.py`, it will not appear in Explore.
-
-## 1. Implement the Engine Function
-
-Open `engines.py` and find the placeholder function for the algorithm you want to implement.
-
-Example:
-
-```python
-def caesar_encrypt(plaintext: str, shift: int = 3) -> dict:
-    """Implement Caesar cipher encryption logic here."""
-    _not_implemented("Caesar cipher encryption")
+```
+crypto/
+├── registry.py              # Auto-discovers all engines (you never edit this)
+└── engines/
+    ├── __init__.py           # Auto-discovery loader
+    ├── _base.py              # Shared helpers
+    ├── aes.py                # One file per algorithm
+    ├── caesar.py
+    ├── sha256.py
+    └── your_new_algo.py      # ← Just create this file!
 ```
 
-Replace the placeholder with your implementation:
+## Quick Start — Add a New Algorithm in One File
+
+**1. Create a new file** in `engines/`, e.g. `engines/my_cipher.py`:
 
 ```python
-def caesar_encrypt(plaintext: str, shift: int = 3) -> dict:
-    result = []
+"""
+CryptoForge Engine — My Cipher
 
-    for char in plaintext:
-        # Add your algorithm logic here.
-        result.append(char)
+A brief description of what this algorithm does.
+Category: Classical Ciphers | Difficulty: 2/5 | Complexity: O(n)
+"""
+from ._base import not_implemented
+
+
+def encrypt(text: str, key: int = 5) -> dict:
+    """
+    Implement your algorithm here.
+    Return a dict with a "result" key containing the output.
+    """
+    # Your implementation goes here
+    result = ""
+    for char in text:
+        if char.isalpha():
+            base = ord('A') if char.isupper() else ord('a')
+            result += chr((ord(char) - base + key) % 26 + base)
+        else:
+            result += char
 
     return {
-        "ciphertext": "".join(result),
-        "shift": shift,
-        "algorithm": "Caesar Cipher",
+        "ciphertext": result,
+        "key": key,
+        "algorithm": "My Cipher",
     }
-```
 
-Keep the function signature compatible with the API:
 
-- Use the first argument for the user input. Common names are `plaintext`, `data`, or `text`.
-- Add extra user-configurable values as keyword arguments, such as `shift`, `key`, `mode`, `a`, or `b`.
-- Return a `dict`.
+# ─── Algorithm Registration ─────────────────────────────────
+# This dict is auto-discovered. Just define it and the algorithm
+# will appear in Explore and be available in the Lab.
 
-## 2. Return a Pipeline-Compatible Output
-
-Pipeline execution looks for one of these keys in the result:
-
-- `ciphertext`
-- `hash`
-- `hmac`
-- `output`
-
-Use one of those keys for the main result so the algorithm can be chained in pipelines.
-
-Good examples:
-
-```python
-return {"ciphertext": encrypted_text, "algorithm": "Caesar Cipher"}
-return {"hash": digest, "algorithm": "SHA-256"}
-return {"output": encoded_text, "algorithm": "Base64 Encode"}
-```
-
-You can include extra metadata too:
-
-```python
-return {
-    "ciphertext": encrypted_text,
-    "key": key,
-    "mode": mode,
-    "algorithm": "AES",
-}
-```
-
-## 3. Register the Algorithm
-
-Open `registry.py`.
-
-Import the engine function at the top:
-
-```python
-from app.crypto.engines import (
-    caesar_encrypt,
-    my_new_algorithm,
-)
-```
-
-Then add or update an entry in `ALGORITHMS`:
-
-```python
-"my-new-algorithm": {
-    "id": "my-new-algorithm",
-    "name": "My New Algorithm",
+ALGORITHM = {
+    "id": "my-cipher",
+    "name": "My Cipher",
     "category": "Classical Ciphers",
     "difficulty": 2,
     "complexity": "O(n)",
     "description": "Short explanation shown on the Explore page.",
     "parameters": ["key"],
-    "encrypt_fn": my_new_algorithm,
-},
+    "encrypt_fn": encrypt,
+}
 ```
 
-The registry fields are:
+**2. That's it!** Restart the backend and your algorithm will appear automatically.
 
-- `id`: URL-safe unique id. This becomes `/lab/<id>`.
-- `name`: Display name in Explore.
-- `category`: Display category and filter group in Explore.
-- `difficulty`: Number from `1` to `5`.
-- `complexity`: Big-O or short runtime note.
-- `description`: Text shown on the Explore card.
-- `parameters`: Names of values accepted from the UI/API.
-- `encrypt_fn`: The Python function from `engines.py`.
+No imports to add. No registry to edit. No other files to touch.
 
-## 4. Choose a Supported Category
+## ALGORITHM Dict Fields
 
-Explore already has badge styles for these categories:
+| Field         | Type     | Description                                         |
+|---------------|----------|-----------------------------------------------------|
+| `id`          | `str`    | URL-safe unique ID. Becomes `/lab/<id>`.             |
+| `name`        | `str`    | Display name in Explore.                             |
+| `category`    | `str`    | Category for filtering (see supported list below).   |
+| `difficulty`  | `int`    | 1–5 difficulty rating.                               |
+| `complexity`  | `str`    | Big-O or short runtime note.                         |
+| `description` | `str`    | Text shown on the Explore card.                      |
+| `parameters`  | `list`   | Names of values accepted from the UI/API.            |
+| `encrypt_fn`  | `func`   | The Python function to execute.                      |
+
+## Supported Categories
+
+Explore has badge styles for these categories:
 
 - `Symmetric`
 - `Asymmetric`
@@ -125,73 +97,54 @@ Explore already has badge styles for these categories:
 - `Math Functions`
 - `Encoding`
 
-Using one of these keeps the UI styled correctly. New category names will still appear, but may not have a matching badge style.
+New category names will still appear, but may not have a matching badge color.
 
-## 5. How API Execution Passes Arguments
+## Return Values for Pipeline Compatibility
 
-The execute endpoint is:
+Pipeline execution looks for one of these keys in the result dict:
 
-```text
-POST /api/algorithms/{algorithm_id}/execute
+- `ciphertext`
+- `hash`
+- `hmac`
+- `output`
+
+Use one of those keys so the algorithm can be chained in pipelines:
+
+```python
+return {"ciphertext": encrypted, "algorithm": "AES"}
+return {"hash": digest, "algorithm": "SHA-256"}
+return {"output": encoded, "algorithm": "Base64 Encode"}
 ```
 
-Request shape:
+## How API Execution Works
+
+```
+POST /api/algorithms/{algorithm_id}/execute
+```
 
 ```json
 {
   "input": "hello",
-  "params": {
-    "key": "secret"
-  },
+  "params": { "key": "secret" },
   "output_format": "hex"
 }
 ```
 
-The backend calls your function like this:
+The backend calls: `encrypt(request.input, **params)`
 
-```python
-result = fn(request.input, **kwargs)
-```
-
-If your registry entry includes `output_format` in `parameters`, the backend also passes `request.output_format`.
-
-Example:
-
-```python
-def sha256_hash(data: str, output_format: str = "hex") -> dict:
-    ...
-```
-
-Registry:
-
-```python
-"parameters": ["output_format"]
-```
-
-## 6. Test Your Change
-
-From the `backend` folder, run:
+## Testing Your Algorithm
 
 ```bash
-python -m py_compile app/crypto/engines.py app/crypto/registry.py app/routes/algorithms.py app/routes/pipelines.py
+# Verify the registry loads
+python -c "from app.crypto.registry import ALGORITHMS; print(len(ALGORITHMS))"
+
+# Check your algorithm is discovered
+python -c "from app.crypto.registry import ALGORITHMS; print(ALGORITHMS['my-cipher']['name'])"
 ```
 
-Check that the registry imports:
+## Common Mistakes
 
-```bash
-python - <<'PY'
-from app.crypto.registry import ALGORITHMS
-print(len(ALGORITHMS))
-print(ALGORITHMS["caesar"]["encrypt_fn"].__name__)
-PY
-```
-
-Start the backend and frontend, then open Explore. If the algorithm is registered, it should appear automatically.
-
-## 7. Common Mistakes
-
-- Implementing a function in `engines.py` but forgetting to import it in `registry.py`.
-- Importing a function in `registry.py` but forgetting to add it to `ALGORITHMS`.
-- Using parameter names in `registry.py` that do not match the function signature.
+- Using a filename starting with `_` (these are skipped by auto-discovery).
+- Forgetting to define the `ALGORITHM` dict at module level.
+- Using parameter names in `ALGORITHM["parameters"]` that don't match the function signature.
 - Returning only custom keys instead of `ciphertext`, `hash`, `hmac`, or `output`.
-- Raising `NotImplementedError` after adding the algorithm to Explore.

@@ -1,7 +1,6 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { Flame, FlaskConical, LogOut, User } from 'lucide-react'
+import { FlaskConical, LogOut, User } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
-import { supabase } from '../lib/supabase'
 import './Navbar.css'
 
 const navItems = [
@@ -15,11 +14,11 @@ const navItems = [
 export default function Navbar() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, signOut } = useAuth()
   const isLanding = location.pathname === '/'
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
+    await signOut()
     navigate('/')
   }
 
@@ -47,10 +46,21 @@ export default function Navbar() {
         <div className="navbar-right">
           {user ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
-              <NavLink to="/dashboard" className="btn btn-ghost btn-sm" title="Dashboard">
-                <User size={18} />
+              <NavLink to="/dashboard" className="btn btn-ghost btn-sm navbar-user-btn" title="Dashboard">
+                {user.user_metadata?.avatar_url ? (
+                  <img
+                    src={user.user_metadata.avatar_url}
+                    alt=""
+                    className="navbar-avatar"
+                  />
+                ) : (
+                  <User size={18} />
+                )}
+                <span className="navbar-user-name">
+                  {user.user_metadata?.full_name || user.email?.split('@')[0]}
+                </span>
               </NavLink>
-              <button className="btn btn-ghost btn-sm" onClick={handleLogout} title="Log Out">
+              <button className="btn btn-ghost btn-sm" onClick={handleLogout} title="Log Out" id="nav-logout">
                 <LogOut size={18} />
               </button>
             </div>
