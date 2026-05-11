@@ -279,9 +279,51 @@ def caesar_encrypt(plaintext: str, shift: int = 3) -> dict:
     }
 
 # ── caesar_decrypt ─────────────────────────────────────────────────
+
 def caesar_decrypt(ciphertext: str, shift: int = 3) -> dict:
-    """Implement Caesar cipher decryption logic here."""
-    _not_implemented("Caesar cipher decryption")
+
+    result = []
+
+    for char in ciphertext:
+
+        # Decrypt lowercase letters
+        if char.islower():
+
+            decrypted = chr((ord(char) - ord('a') - shift) % 26 + ord('a'))
+
+            result.append(decrypted)
+
+        # Decrypt uppercase letters
+        elif char.isupper():
+
+            decrypted = chr((ord(char) - ord('A') - shift) % 26 + ord('A'))
+
+            result.append(decrypted)
+
+        # Decrypt numbers
+        elif char.isnumeric():
+
+            decrypted = str((int(char) - shift) % 10)
+
+            result.append(decrypted)
+
+        # Keep spaces unchanged
+        elif char.isspace():
+
+            result.append(char)
+
+        # Decrypt special characters
+        else:
+
+            decrypted = chr(ord(char) - shift)
+
+            result.append(decrypted)
+
+    return {
+        "plaintext": "".join(result),
+        "shift": shift,
+        "algorithm": "Caesar Cipher Decryption",
+    }
 
 
 # ── Blowfish ─────────────────────────────────────────────────
@@ -397,6 +439,57 @@ def vigenere_encrypt(plaintext: str, key: str = "KEY", space: bool = False) -> d
         "ciphertext": "".join(result),
         "key": key,
         "algorithm": "Vigenere Cipher",
+    }
+
+# — Vigenere Cipher Decryption ————————————————————————————————
+
+def vigenere_decrypt(ciphertext: str, key: str = "KEY") -> dict:
+
+    result = []
+    key_size = len(key)
+
+    for i in range(len(ciphertext)):
+
+        char = ciphertext[i]
+        b = key[i % key_size]
+
+        # Decrypt uppercase letters
+        if char.isupper():
+
+            element = ord(char) - ord('A')
+
+            if b.isupper():
+                key_value = ord(b) - ord('A')
+            else:
+                key_value = ord(b) - ord('a')
+
+            decrypted = chr((element - key_value) % 26 + ord('A'))
+
+            result.append(decrypted)
+
+        # Decrypt lowercase letters
+        elif char.islower():
+
+            element = ord(char) - ord('a')
+
+            if b.isupper():
+                key_value = ord(b) - ord('A')
+            else:
+                key_value = ord(b) - ord('a')
+
+            decrypted = chr((element - key_value) % 26 + ord('a'))
+
+            result.append(decrypted)
+
+        # Keep all other characters unchanged
+        else:
+
+            result.append(char)
+
+    return {
+        "plaintext": "".join(result),
+        "key": key,
+        "algorithm": "Vigenere Cipher Decryption",
     }
 # ── polybius─────────────────────────────────────────────────
 def polybius(text: str) -> dict:
