@@ -33,10 +33,13 @@ async def execute_pipeline(request: PipelineRequest):
 
         try:
             fn = algo["encrypt_fn"]
-            kwargs = {**step.params}
+            kwargs = {}
+            for k, v in step.params.items():
+                if k in algo.get("parameters", []):
+                    kwargs[k] = v
 
             # For the last step, use the requested output format
-            if i == len(request.steps) - 1 and "output_format" in algo["parameters"]:
+            if i == len(request.steps) - 1 and "output_format" in algo.get("parameters", []):
                 kwargs["output_format"] = request.output_format
 
             result = fn(current_data, **kwargs)

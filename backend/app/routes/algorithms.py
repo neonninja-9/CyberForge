@@ -62,8 +62,12 @@ async def execute_algorithm(algorithm_id: str, request: ExecuteRequest):
     try:
         fn = algo["encrypt_fn"]
         # Build kwargs from params
-        kwargs = {**request.params}
-        if "output_format" in algo["parameters"]:
+        kwargs = {}
+        for k, v in request.params.items():
+            if k in algo.get("parameters", []):
+                kwargs[k] = v
+
+        if "output_format" in algo.get("parameters", []):
             kwargs["output_format"] = request.output_format
 
         # Call the function — some take 'plaintext', some take 'data', some take 'text'
