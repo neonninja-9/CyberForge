@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Plus, GripVertical, Trash2, Play, X, ChevronDown, ChevronUp, Search } from 'lucide-react'
 import { Panel, Group as PanelGroup, Separator as PanelResizeHandle } from 'react-resizable-panels'
+import { api } from '../lib/api'
 import './Pipelines.css'
 
 const availableAlgos = {
@@ -21,6 +22,7 @@ export default function Pipelines() {
   const [input, setInput] = useState('Hello, CryptoForge!')
   const [output, setOutput] = useState('')
   const [isRunning, setIsRunning] = useState(false)
+  const [runError, setRunError] = useState('')
   const [drawerSearch, setDrawerSearch] = useState('')
 
   const addStep = (name) => {
@@ -33,8 +35,18 @@ export default function Pipelines() {
 
   const handleRun = async () => {
     setIsRunning(true)
-    await new Promise(r => setTimeout(r, 1500))
-    setOutput('Q3J5cHRvRm9yZ2UgUGlwZWxpbmUgT3V0cHV0IC0gU3VjY2VzcyE=')
+    setRunError('')
+    setOutput('')
+    try {
+      const result = await api.executePipeline({
+        steps: steps.map(s => ({ algorithm_id: s.name.toLowerCase().replace(/\s+/g, '_').replace(/-/g, '_'), params: {} })),
+        input,
+        output_format: 'hex',
+      })
+      setOutput(result.final_output || JSON.stringify(result, null, 2))
+    } catch (err) {
+      setRunError(err.message)
+    }
     setIsRunning(false)
   }
 
@@ -169,6 +181,18 @@ export default function Pipelines() {
             >
               {isRunning ? 'Running Pipeline...' : <><Play size={18} /> Run Pipeline</>}
             </button>
+
+            {/* Error */}
+            {runError && (
+              <div className="lab-error animate-fade-in-up" style={{ marginTop: 'var(--space-md)' }}>
+                <div className="text-subtitle-lg" style={{ color: 'var(--color-critical)', marginBottom: 'var(--space-sm)' }}>
+                  Pipeline Error
+                </div>
+                <div className="code-block" style={{ borderColor: 'var(--color-critical)' }}>
+                  <code style={{ color: 'var(--color-critical)' }}>{runError}</code>
+                </div>
+              </div>
+            )}
 
             {/* Output */}
             {output && (

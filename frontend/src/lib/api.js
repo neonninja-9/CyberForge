@@ -29,9 +29,9 @@ export const api = {
   getAlgorithmCode: (id) => request(`/api/algorithms/${id}/code`),
 
   // Pipelines
-  executePipeline: (steps) => request('/api/pipelines/execute', {
+  executePipeline: (pipelineData) => request('/api/pipelines/execute', {
     method: 'POST',
-    body: JSON.stringify({ steps }),
+    body: JSON.stringify(pipelineData),
   }),
 
   // Challenges
