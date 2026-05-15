@@ -25,14 +25,17 @@ First-principle implementation — no cryptographic libraries used.
 
 Category: Asymmetric | Difficulty: 4/5 | Complexity: O(n³)
 """
-import random
 
+import secrets
 
 # ─── Math primitives (same as RSA engine) ──────────────────────────────────
 
+
 def _gcd(a, b):
-    while b: a, b = b, a % b
+    while b:
+        a, b = b, a % b
     return a
+
 
 def _mod_inverse(a, m):
     """Extended Euclidean: find d where (a×d) mod m == 1."""
@@ -44,38 +47,51 @@ def _mod_inverse(a, m):
         old_s, s = s, old_s - q * s
     return old_s % m
 
+
 def _mod_pow(base, exp, mod):
     """Repeated squaring for fast modular exponentiation."""
     result = 1
     base %= mod
     while exp > 0:
-        if exp & 1: result = result * base % mod
+        if exp & 1:
+            result = result * base % mod
         exp >>= 1
         base = base * base % mod
     return result
 
+
 def _is_probable_prime(n, k=20):
-    if n < 4: return n >= 2
-    if n % 2 == 0: return False
+    if n < 4:
+        return n >= 2
+    if n % 2 == 0:
+        return False
     r, d = 0, n - 1
-    while d % 2 == 0: r += 1; d //= 2
+    while d % 2 == 0:
+        r += 1
+        d //= 2
     for _ in range(k):
-        a = random.randrange(2, n - 1)
+        a = secrets.SystemRandom().randrange(2, n - 1)
         x = _mod_pow(a, d, n)
-        if x in (1, n - 1): continue
+        if x in (1, n - 1):
+            continue
         for _ in range(r - 1):
             x = _mod_pow(x, 2, n)
-            if x == n - 1: break
-        else: return False
+            if x == n - 1:
+                break
+        else:
+            return False
     return True
+
 
 def _generate_prime(bits):
     while True:
-        n = random.getrandbits(bits) | (1 << (bits-1)) | 1
-        if _is_probable_prime(n): return n
+        n = secrets.SystemRandom().getrandbits(bits) | (1 << (bits - 1)) | 1
+        if _is_probable_prime(n):
+            return n
 
 
 # ─── Simple hash (DJB2 — for signing demo, not cryptographic strength) ─────
+
 
 def _simple_hash(message: str) -> int:
     """
@@ -89,29 +105,33 @@ def _simple_hash(message: str) -> int:
       for each byte: hash = hash × 33 + byte
     """
     h = 5381
-    for ch in message.encode('utf-8'):
+    for ch in message.encode("utf-8"):
         h = ((h << 5) + h + ch) & 0xFFFFFFFFFFFFFFFF  # h * 33 + ch, 64-bit
     return h
 
 
 # ─── RSA key generation ────────────────────────────────────────────────────
 
+
 def _generate_keypair(bits=256):
     """Generate a small RSA key pair for signing demo."""
     p = _generate_prime(bits // 2)
     q = _generate_prime(bits // 2)
-    while p == q: q = _generate_prime(bits // 2)
+    while p == q:
+        q = _generate_prime(bits // 2)
     n = p * q
     phi = (p - 1) * (q - 1)
     e = 65537
     if _gcd(e, phi) != 1:
         e = 3
-        while _gcd(e, phi) != 1: e += 2
+        while _gcd(e, phi) != 1:
+            e += 2
     d = _mod_inverse(e, phi)
     return {"n": n, "e": e, "d": d}
 
 
 # ─── Sign & Verify ─────────────────────────────────────────────────────────
+
 
 def sign(message: str, d: int, n: int) -> int:
     """

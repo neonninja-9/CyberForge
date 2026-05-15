@@ -4,6 +4,7 @@ CryptoForge Engine — Base64 Encode
 Base64 encoding/decoding.
 Category: Encoding | Difficulty: 1/5 | Complexity: O(n)
 """
+
 from ._base import not_implemented
 
 
@@ -20,6 +21,7 @@ def encrypt(data: str) -> dict:
 def decode(data: str) -> dict:
     """Implement Base64 decoding logic here."""
     not_implemented("Base64 decode")
+
 
 # ─── Algorithm Registration ─────────────────────────────────────────────────
 # This dict is auto-discovered by the engine loader. Just define it and the

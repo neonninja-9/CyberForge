@@ -40,7 +40,9 @@ async def get_algorithm(algorithm_id: str):
     """Get details of a specific algorithm."""
     algo = ALGORITHMS.get(algorithm_id)
     if not algo:
-        raise HTTPException(status_code=404, detail=f"Algorithm '{algorithm_id}' not found")
+        raise HTTPException(
+            status_code=404, detail=f"Algorithm '{algorithm_id}' not found"
+        )
     return {
         "id": algo["id"],
         "name": algo["name"],
@@ -57,7 +59,9 @@ async def execute_algorithm(algorithm_id: str, request: ExecuteRequest):
     """Execute a cryptographic algorithm on the given input."""
     algo = ALGORITHMS.get(algorithm_id)
     if not algo:
-        raise HTTPException(status_code=404, detail=f"Algorithm '{algorithm_id}' not found")
+        raise HTTPException(
+            status_code=404, detail=f"Algorithm '{algorithm_id}' not found"
+        )
 
     try:
         action = request.params.get("action", "encrypt")
@@ -65,7 +69,7 @@ async def execute_algorithm(algorithm_id: str, request: ExecuteRequest):
             fn = algo["decrypt_fn"]
         else:
             fn = algo["encrypt_fn"]
-            
+
         # Build kwargs from params, strictly filtering out unexpected arguments
         allowed_params = algo.get("parameters", [])
         kwargs = {k: v for k, v in request.params.items() if k in allowed_params}
@@ -89,7 +93,11 @@ async def execute_algorithm(algorithm_id: str, request: ExecuteRequest):
 
     except Exception as e:
         error_msg = str(e)
-        if "invalid literal" in error_msg or "unsupported operand" in error_msg or "type" in error_msg.lower():
+        if (
+            "invalid literal" in error_msg
+            or "unsupported operand" in error_msg
+            or "type" in error_msg.lower()
+        ):
             error_msg = "Invalid parameter type or format provided."
         raise HTTPException(status_code=400, detail=error_msg)
 
@@ -99,7 +107,9 @@ async def get_algorithm_code(algorithm_id: str):
     """Get the Python source code of a cryptographic algorithm."""
     algo = ALGORITHMS.get(algorithm_id)
     if not algo:
-        raise HTTPException(status_code=404, detail=f"Algorithm '{algorithm_id}' not found")
+        raise HTTPException(
+            status_code=404, detail=f"Algorithm '{algorithm_id}' not found"
+        )
 
     try:
         source = inspect.getsource(algo["encrypt_fn"])

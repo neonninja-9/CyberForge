@@ -5,6 +5,7 @@ Automatically discovers and registers all algorithm modules in this package.
 To add a new algorithm, simply create a new .py file in this directory
 with an ALGORITHM dict — no other files need to be edited.
 """
+
 import importlib
 import pkgutil
 

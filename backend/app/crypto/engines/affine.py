@@ -56,12 +56,12 @@ def encrypt(text: str, a: int = 5, b: int = 8) -> dict:
 
     result = []
     for ch in text:
-        if 'A' <= ch <= 'Z':
-            x = ord(ch) - ord('A')
-            result.append(chr((a * x + b) % ALPHABET_SIZE + ord('A')))
-        elif 'a' <= ch <= 'z':
-            x = ord(ch) - ord('a')
-            result.append(chr((a * x + b) % ALPHABET_SIZE + ord('a')))
+        if "A" <= ch <= "Z":
+            x = ord(ch) - ord("A")
+            result.append(chr((a * x + b) % ALPHABET_SIZE + ord("A")))
+        elif "a" <= ch <= "z":
+            x = ord(ch) - ord("a")
+            result.append(chr((a * x + b) % ALPHABET_SIZE + ord("a")))
         else:
             result.append(ch)
 
@@ -83,12 +83,12 @@ def decrypt(ciphertext: str, a: int = 5, b: int = 8) -> dict:
 
     result = []
     for ch in ciphertext:
-        if 'A' <= ch <= 'Z':
-            y = ord(ch) - ord('A')
-            result.append(chr((a_inv * (y - b)) % ALPHABET_SIZE + ord('A')))
-        elif 'a' <= ch <= 'z':
-            y = ord(ch) - ord('a')
-            result.append(chr((a_inv * (y - b)) % ALPHABET_SIZE + ord('a')))
+        if "A" <= ch <= "Z":
+            y = ord(ch) - ord("A")
+            result.append(chr((a_inv * (y - b)) % ALPHABET_SIZE + ord("A")))
+        elif "a" <= ch <= "z":
+            y = ord(ch) - ord("a")
+            result.append(chr((a_inv * (y - b)) % ALPHABET_SIZE + ord("a")))
         else:
             result.append(ch)
 

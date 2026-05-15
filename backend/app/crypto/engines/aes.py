@@ -4,10 +4,13 @@ CryptoForge Engine — AES-256
 Advanced Encryption Standard with 256-bit key — the gold standard for symmetric encryption.
 Category: Symmetric | Difficulty: 4/5 | Complexity: O(1) per block
 """
+
 from ._base import not_implemented
 
 
-def encrypt(plaintext: str, key_size: int = 256, mode: str = "CBC", output_format: str = "hex") -> dict:
+def encrypt(
+    plaintext: str, key_size: int = 256, mode: str = "CBC", output_format: str = "hex"
+) -> dict:
     """
     Implement AES-256 logic here.
 
@@ -17,10 +20,17 @@ def encrypt(plaintext: str, key_size: int = 256, mode: str = "CBC", output_forma
     not_implemented("AES-256")
 
 
-def decrypt(ciphertext_hex: str, key_hex: str, mode: str = "CBC",
-            iv_hex: str = None, nonce_hex: str = None, tag_hex: str = None) -> dict:
+def decrypt(
+    ciphertext_hex: str,
+    key_hex: str,
+    mode: str = "CBC",
+    iv_hex: str = None,
+    nonce_hex: str = None,
+    tag_hex: str = None,
+) -> dict:
     """Implement AES decryption logic here."""
     not_implemented("AES decryption")
+
 
 # ─── Algorithm Registration ─────────────────────────────────────────────────
 # This dict is auto-discovered by the engine loader. Just define it and the

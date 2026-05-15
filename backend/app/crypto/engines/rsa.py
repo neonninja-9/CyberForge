@@ -16,11 +16,15 @@ Encryption:  c = m^e mod n  |  Decryption: m = c^d mod n
 
 Category: Asymmetric | Difficulty: 5/5 | Complexity: O(n³)
 """
-import random
+
+import secrets
+
 
 def _gcd(a, b):
-    while b: a, b = b, a % b
+    while b:
+        a, b = b, a % b
     return a
+
 
 def _mod_inverse(a, m):
     """Extended Euclidean Algorithm: find d where (a×d) mod m == 1."""
@@ -34,53 +38,75 @@ def _mod_inverse(a, m):
         old_s, s = s, old_s - q * s
     return old_s % m
 
+
 def _mod_pow(base, exp, mod):
     """Fast modular exponentiation via repeated squaring: O(log exp)."""
     result = 1
     base %= mod
     while exp > 0:
-        if exp & 1: result = result * base % mod
+        if exp & 1:
+            result = result * base % mod
         exp >>= 1
         base = base * base % mod
     return result
 
+
 def _is_probable_prime(n, k=20):
     """Miller-Rabin: probabilistic primality test with k witnesses."""
-    if n < 4: return n >= 2
-    if n % 2 == 0: return False
+    if n < 4:
+        return n >= 2
+    if n % 2 == 0:
+        return False
     # Write n-1 = 2^r × d
     r, d = 0, n - 1
-    while d % 2 == 0: r += 1; d //= 2
+    while d % 2 == 0:
+        r += 1
+        d //= 2
     for _ in range(k):
-        a = random.randrange(2, n - 1)
+        a = secrets.SystemRandom().randrange(2, n - 1)
         x = _mod_pow(a, d, n)
-        if x in (1, n - 1): continue
+        if x in (1, n - 1):
+            continue
         for _ in range(r - 1):
             x = _mod_pow(x, 2, n)
-            if x == n - 1: break
-        else: return False
+            if x == n - 1:
+                break
+        else:
+            return False
     return True
+
 
 def _generate_prime(bits):
     """Generate a random prime with given bit length."""
     while True:
-        n = random.getrandbits(bits) | (1 << (bits-1)) | 1
-        if _is_probable_prime(n): return n
+        n = secrets.SystemRandom().getrandbits(bits) | (1 << (bits - 1)) | 1
+        if _is_probable_prime(n):
+            return n
+
 
 def generate_keypair(bits=512):
     """Generate RSA key pair: public (n,e) and private (n,d)."""
     p = _generate_prime(bits // 2)
     q = _generate_prime(bits // 2)
-    while p == q: q = _generate_prime(bits // 2)
+    while p == q:
+        q = _generate_prime(bits // 2)
     n = p * q
     phi = (p - 1) * (q - 1)
     e = 65537
     if _gcd(e, phi) != 1:
         e = 3
-        while _gcd(e, phi) != 1: e += 2
+        while _gcd(e, phi) != 1:
+            e += 2
     d = _mod_inverse(e, phi)
-    return {"public_key": {"n": n, "e": e}, "private_key": {"n": n, "d": d},
-            "p": p, "q": q, "phi": phi, "bits": bits}
+    return {
+        "public_key": {"n": n, "e": e},
+        "private_key": {"n": n, "d": d},
+        "p": p,
+        "q": q,
+        "phi": phi,
+        "bits": bits,
+    }
+
 
 def encrypt(bits: int = 512) -> dict:
     """Generate key pair and demo encrypt/decrypt a sample number."""
@@ -92,15 +118,23 @@ def encrypt(bits: int = 512) -> dict:
     pt = _mod_pow(ct, priv["d"], priv["n"])
     return {
         "output": f"RSA key pair generated ({bits}-bit)",
-        "public_key_e": pub["e"], "public_key_n_bits": pub["n"].bit_length(),
-        "sample_plaintext": msg, "sample_ciphertext": str(ct)[:60]+"...",
-        "sample_decrypted": pt, "verified": msg == pt,
+        "public_key_e": pub["e"],
+        "public_key_n_bits": pub["n"].bit_length(),
+        "sample_plaintext": msg,
+        "sample_ciphertext": str(ct)[:60] + "...",
+        "sample_decrypted": pt,
+        "verified": msg == pt,
         "algorithm": "RSA",
     }
 
+
 ALGORITHM = {
-    "id": "rsa-2048", "name": "RSA-2048", "category": "Asymmetric",
-    "difficulty": 5, "complexity": "O(n³)",
+    "id": "rsa-2048",
+    "name": "RSA-2048",
+    "category": "Asymmetric",
+    "difficulty": 5,
+    "complexity": "O(n³)",
     "description": "Rivest-Shamir-Adleman public-key cryptosystem for secure key exchange and digital signatures.",
-    "parameters": ["bits"], "encrypt_fn": encrypt,
+    "parameters": ["bits"],
+    "encrypt_fn": encrypt,
 }

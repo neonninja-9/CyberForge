@@ -4,6 +4,7 @@ CryptoForge Engine — Elliptic Curve Cryptography
 Public-key cryptography based on the algebraic structure of elliptic curves over finite fields.
 Category: Asymmetric | Difficulty: 5/5 | Complexity: O(log(n))
 """
+
 from ._base import not_implemented
 
 

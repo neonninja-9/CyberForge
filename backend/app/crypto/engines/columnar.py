@@ -4,6 +4,7 @@ CryptoForge Engine — Columnar Transposition
 A transposition cipher that reads the plaintext across columns of a grid, then reads it out by column based on a keyword.
 Category: Classical Ciphers | Difficulty: 3/5 | Complexity: O(n)
 """
+
 from ._base import not_implemented
 
 

@@ -68,4 +68,3 @@ if _static_dir.is_dir():
         except ValueError:
             pass
         return FileResponse(_static_dir / "index.html")
-

@@ -24,7 +24,7 @@ GRID_SIZE = 5
 
 def _build_grid(key: str) -> list:
     """Build the 5×5 Playfair grid from a keyword."""
-    key = key.upper().replace('J', 'I')
+    key = key.upper().replace("J", "I")
     seen = set()
     ordered = []
 
@@ -41,7 +41,7 @@ def _build_grid(key: str) -> list:
             ordered.append(ch)
 
     # Build 5×5 grid
-    return [ordered[i * GRID_SIZE:(i + 1) * GRID_SIZE] for i in range(GRID_SIZE)]
+    return [ordered[i * GRID_SIZE : (i + 1) * GRID_SIZE] for i in range(GRID_SIZE)]
 
 
 def _find_position(grid: list, char: str) -> tuple:
@@ -63,7 +63,7 @@ def _prepare_digraphs(text: str) -> list:
     clean = []
     for ch in text.upper():
         if ch.isalpha():
-            clean.append('I' if ch == 'J' else ch)
+            clean.append("I" if ch == "J" else ch)
 
     # Build digraphs, inserting X between duplicates
     digraphs = []
@@ -73,13 +73,13 @@ def _prepare_digraphs(text: str) -> list:
         if i + 1 < len(clean):
             b = clean[i + 1]
             if a == b:
-                digraphs.append((a, 'X'))
+                digraphs.append((a, "X"))
                 i += 1  # only advance by 1
             else:
                 digraphs.append((a, b))
                 i += 2
         else:
-            digraphs.append((a, 'X'))  # pad odd length
+            digraphs.append((a, "X"))  # pad odd length
             i += 1
 
     return digraphs

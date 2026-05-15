@@ -4,6 +4,7 @@ CryptoForge Engine — Rail Fence Cipher
 A form of transposition cipher that writes text downwards and diagonally on successive rails.
 Category: Classical Ciphers | Difficulty: 2/5 | Complexity: O(n)
 """
+
 from ._base import not_implemented
 
 
