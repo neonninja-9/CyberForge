@@ -1,5 +1,6 @@
+import asyncio
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 router = APIRouter()
 
@@ -41,7 +42,7 @@ CHALLENGES = [
 
 
 class ChallengeSubmission(BaseModel):
-    answer: str
+    answer: str = Field(..., max_length=1000)
 
 
 @router.get("/")
@@ -82,6 +83,8 @@ async def get_challenge(challenge_id: str):
 @router.post("/{challenge_id}/submit")
 async def submit_challenge(challenge_id: str, submission: ChallengeSubmission):
     """Submit an answer for a challenge."""
+    await asyncio.sleep(1)  # Anti-brute-force artificial delay
+
     ch = next((c for c in CHALLENGES if c["id"] == challenge_id), None)
     if not ch:
         raise HTTPException(status_code=404, detail="Challenge not found")

@@ -57,8 +57,13 @@ if _static_dir.is_dir():
     @app.get("/{full_path:path}")
     async def spa_fallback(request: Request, full_path: str):
         """Serve static files or fall back to index.html for SPA routes."""
-        file_path = _static_dir / full_path
-        if file_path.is_file():
-            return FileResponse(file_path)
+        try:
+            file_path = (_static_dir / full_path).resolve()
+            if not file_path.is_relative_to(_static_dir.resolve()):
+                return FileResponse(_static_dir / "index.html")
+            if file_path.is_file():
+                return FileResponse(file_path)
+        except ValueError:
+            pass
         return FileResponse(_static_dir / "index.html")
 
