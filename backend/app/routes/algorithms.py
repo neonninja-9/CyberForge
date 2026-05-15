@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-from typing import Optional
 from app.crypto.registry import ALGORITHMS
 import inspect
 
