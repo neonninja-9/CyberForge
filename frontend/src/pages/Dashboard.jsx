@@ -282,32 +282,34 @@ export default function Dashboard() {
                 <Link to="/explore" className="btn btn-primary btn-sm">Go to Explore</Link>
               </div>
             ) : (
-              <table className="activity-table">
-                <thead>
-                  <tr>
-                    <th>Algorithm</th>
-                    <th>Category</th>
-                    <th>Runs</th>
-                    <th>Last Used</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentActivity.map(run => (
-                    <tr key={run.id}>
-                      <td className="text-body-sm-bold">
-                        <Link to={`/lab/${run.algorithm_id}`} style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>
-                          {run.algorithm_name}
-                        </Link>
-                      </td>
-                      <td><span className="badge badge-sm">{run.category}</span></td>
-                      <td>{run.run_count}×</td>
-                      <td className="text-caption" style={{ color: 'var(--color-steel)' }}>
-                        {new Date(run.last_run_at).toLocaleDateString()}
-                      </td>
+              <div style={{ overflowX: 'auto' }}>
+                <table className="activity-table">
+                  <thead>
+                    <tr>
+                      <th>Algorithm</th>
+                      <th>Category</th>
+                      <th>Runs</th>
+                      <th>Last Used</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {recentActivity.map(run => (
+                      <tr key={run.id}>
+                        <td className="text-body-sm-bold">
+                          <Link to={`/lab/${run.algorithm_id}`} style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>
+                            {run.algorithm_name}
+                          </Link>
+                        </td>
+                        <td><span className="badge badge-sm">{run.category}</span></td>
+                        <td>{run.run_count}×</td>
+                        <td className="text-caption" style={{ color: 'var(--color-steel)' }}>
+                          {new Date(run.last_run_at).toLocaleDateString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         </div>

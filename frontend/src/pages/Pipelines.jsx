@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus, GripVertical, Trash2, Play, X, ChevronDown, ChevronUp, Search } from 'lucide-react'
 import { Panel, Group as PanelGroup, Separator as PanelResizeHandle } from 'react-resizable-panels'
 import { api } from '../lib/api'
@@ -24,6 +24,15 @@ export default function Pipelines() {
   const [isRunning, setIsRunning] = useState(false)
   const [runError, setRunError] = useState('')
   const [drawerSearch, setDrawerSearch] = useState('')
+
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const addStep = (name) => {
     setSteps(prev => [...prev, { id: Date.now(), name, params: 'Default parameters', expanded: false }])
@@ -52,10 +61,10 @@ export default function Pipelines() {
 
   return (
     <div className="pipelines-page" id="pipelines-page">
-      <PanelGroup direction="horizontal" className="pipelines-layout-panels">
+      <PanelGroup direction={isMobile ? "vertical" : "horizontal"} className="pipelines-layout-panels">
         {/* Left Drawer - Available Algorithms */}
         <Panel defaultSize={20} minSize={15}>
-          <aside className="pipeline-drawer" id="algo-drawer" style={{ height: '100%', overflowY: 'auto', paddingRight: 'var(--space-md)' }}>
+          <aside className="pipeline-drawer" id="algo-drawer" style={{ height: '100%', overflowY: 'auto' }}>
             <div className="card-flat card-sm">
               <h4 className="text-subtitle-lg" style={{ marginBottom: 'var(--space-base)' }}>Available Algorithms</h4>
               <div style={{ position: 'relative', marginBottom: 'var(--space-base)' }}>
@@ -94,7 +103,7 @@ export default function Pipelines() {
 
         {/* Center - Pipeline */}
         <Panel defaultSize={55} minSize={30}>
-          <main className="pipeline-center" id="pipeline-center" style={{ height: '100%', overflowY: 'auto', padding: '0 var(--space-md)' }}>
+          <main className="pipeline-center" id="pipeline-center" style={{ height: '100%', overflowY: 'auto' }}>
             <div className="pipeline-header">
               <h2 className="text-heading-sm">My Encryption Pipeline</h2>
               <div className="flex gap-md">
@@ -214,7 +223,7 @@ export default function Pipelines() {
 
         {/* Right - Summary */}
         <Panel defaultSize={25} minSize={20}>
-          <aside className="pipeline-summary" id="pipeline-summary" style={{ height: '100%', overflowY: 'auto', paddingLeft: 'var(--space-md)' }}>
+          <aside className="pipeline-summary" id="pipeline-summary" style={{ height: '100%', overflowY: 'auto' }}>
             <div className="card-flat card-sm">
               <h4 className="text-subtitle-lg" style={{ marginBottom: 'var(--space-lg)' }}>Pipeline Summary</h4>
               <div className="summary-stat">

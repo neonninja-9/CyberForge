@@ -3,6 +3,12 @@
   min-height: calc(100vh - var(--nav-height));
 }
 
+@media (max-width: 767px) {
+  .lab-page {
+    padding: var(--space-md);
+  }
+}
+
 .lab-layout-panels {
   display: flex;
   height: 100%;
@@ -44,6 +50,16 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-xl);
+}
+
+.lab-info { padding-right: var(--space-md); }
+.lab-playground { padding: 0 var(--space-md); }
+.lab-viz { padding-left: var(--space-md); }
+
+@media (max-width: 1023px) {
+  .lab-info, .lab-playground, .lab-viz {
+    padding: 0;
+  }
 }
 
 

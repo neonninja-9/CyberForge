@@ -173,6 +173,15 @@ export default function Lab() {
     return output;
   }, [output, outputFormat]);
 
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   // Fetch algorithm details
   useEffect(() => {
     if (!algorithmId) return
@@ -282,10 +291,10 @@ export default function Lab() {
 
   return (
     <div className="lab-page" id="lab-page">
-      <PanelGroup direction="horizontal" className="lab-layout-panels">
+      <PanelGroup direction={isMobile ? "vertical" : "horizontal"} className="lab-layout-panels">
         {/* Left Panel - Algorithm Info */}
         <Panel defaultSize={25} minSize={20}>
-          <aside className="lab-info" id="lab-info-panel" style={{ height: '100%', overflowY: 'auto', paddingRight: 'var(--space-md)' }}>
+          <aside className="lab-info" id="lab-info-panel" style={{ height: '100%', overflowY: 'auto' }}>
             <div className="card-flat card-sm">
               <button
                 className="btn btn-ghost btn-sm"
@@ -401,7 +410,7 @@ export default function Lab() {
 
         {/* Center Panel - Playground */}
         <Panel defaultSize={50} minSize={30}>
-          <main className="lab-playground" id="lab-playground" style={{ height: '100%', overflowY: 'auto', padding: '0 var(--space-md)' }}>
+          <main className="lab-playground" id="lab-playground" style={{ height: '100%', overflowY: 'auto' }}>
             <div className="card-flat card-sm">
               <label className="label">Input</label>
               <textarea
@@ -534,7 +543,7 @@ export default function Lab() {
 
         {/* Right Panel - Details & Info */}
         <Panel defaultSize={25} minSize={20}>
-          <aside className="lab-viz" id="lab-viz-panel" style={{ height: '100%', overflowY: 'auto', paddingLeft: 'var(--space-md)' }}>
+          <aside className="lab-viz" id="lab-viz-panel" style={{ height: '100%', overflowY: 'auto' }}>
             <div className="card-flat card-sm">
               <div className="flex gap-md" style={{ marginBottom: 'var(--space-xl)', alignItems: 'center' }}>
                 <h4 className="text-subtitle-lg">Algorithm Details</h4>

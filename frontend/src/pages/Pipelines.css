@@ -3,6 +3,12 @@
   min-height: calc(100vh - var(--nav-height));
 }
 
+@media (max-width: 767px) {
+  .pipelines-page {
+    padding: var(--space-md);
+  }
+}
+
 .pipelines-layout-panels {
   display: flex;
   height: 100%;
@@ -50,6 +56,16 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-xl);
+}
+
+.pipeline-drawer { padding-right: var(--space-md); }
+.pipeline-center { padding: 0 var(--space-md); }
+.pipeline-summary { padding-left: var(--space-md); }
+
+@media (max-width: 1023px) {
+  .pipeline-drawer, .pipeline-center, .pipeline-summary {
+    padding: 0;
+  }
 }
 
 .pipeline-header {
