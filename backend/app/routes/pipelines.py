@@ -59,7 +59,7 @@ async def execute_pipeline(request: PipelineRequest):
         except Exception as e:
             raise HTTPException(
                 status_code=400,
-                detail=f"Step {i+1} ({algo['name']}): {str(e)}"
+                detail=f"Step {i+1} ({algo['name']}): Invalid parameter type or format provided."
             )
 
     return {

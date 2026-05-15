@@ -1,0 +1,10 @@
+🔒 Fix Information Disclosure via Reflected Exceptions
+
+🎯 What:
+The application previously returned raw internal Python exception strings directly in HTTP response payloads within `pipelines.py` and `algorithms.py`.
+
+⚠️ Risk:
+Reflecting internal error details (e.g. `AttributeError: 'int' object has no attribute 'upper'`) gives potential attackers insight into the application's internal structure and types. This can facilitate discovering attack vectors, exploiting code injections, or aiding in mapping out the codebase.
+
+🛡️ Solution:
+Updated exception handling blocks in both `backend/app/routes/pipelines.py` and `backend/app/routes/algorithms.py` to return generic error messages ("Invalid parameter type or format provided."). Internal implementation details are no longer leaked to clients.

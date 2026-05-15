@@ -88,9 +88,7 @@ async def execute_algorithm(algorithm_id: str, request: ExecuteRequest):
         return {"success": True, "algorithm": algo["name"], "result": result}
 
     except Exception as e:
-        error_msg = str(e)
-        if "invalid literal" in error_msg or "unsupported operand" in error_msg or "type" in error_msg.lower():
-            error_msg = "Invalid parameter type or format provided."
+        error_msg = "Invalid parameter type or format provided."
         raise HTTPException(status_code=400, detail=error_msg)
 
 
