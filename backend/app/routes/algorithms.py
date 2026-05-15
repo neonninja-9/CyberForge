@@ -3,6 +3,15 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from app.crypto.registry import ALGORITHMS
 import inspect
+from functools import lru_cache
+
+
+@lru_cache(maxsize=None)
+def _get_first_param_name(fn):
+    sig = inspect.signature(fn)
+    param_names = list(sig.parameters.keys())
+    return param_names[0] if param_names else None
+
 
 router = APIRouter(redirect_slashes=False)
 
@@ -73,9 +82,7 @@ async def execute_algorithm(algorithm_id: str, request: ExecuteRequest):
             kwargs["output_format"] = request.output_format
 
         # Call the function — some take 'plaintext', some take 'data', some take 'text'
-        sig = inspect.signature(fn)
-        param_names = list(sig.parameters.keys())
-        first_param = param_names[0] if param_names else None
+        first_param = _get_first_param_name(fn)
 
         if first_param in ("plaintext", "data", "text"):
             result = fn(request.input, **kwargs)
