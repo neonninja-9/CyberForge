@@ -6,8 +6,8 @@ router = APIRouter()
 
 
 # Sample challenges (in production these would come from Supabase)
-CHALLENGES = [
-    {
+CHALLENGES = {
+    "daily-1": {
         "id": "daily-1",
         "title": "Break the Substitution Cipher",
         "description": "You've intercepted an encrypted message. Using frequency analysis, decrypt the hidden text.",
@@ -18,7 +18,7 @@ CHALLENGES = [
         "answer": "Hello World! This is a secret message.",
         "hint": "This is a simple shift cipher. Try different shift values.",
     },
-    {
+    "c1": {
         "id": "c1",
         "title": "Decrypt the Caesar Shift",
         "description": "Given a message shifted by an unknown key, find the plaintext.",
@@ -28,7 +28,7 @@ CHALLENGES = [
         "answer": "The quick brown fox jumps over the lazy dog",
         "hint": "The shift value is less than 5.",
     },
-    {
+    "c2": {
         "id": "c2",
         "title": "ROT13 Roundtrip",
         "description": "Prove that ROT13 applied twice returns the original text.",
@@ -38,7 +38,7 @@ CHALLENGES = [
         "answer": "CryptoForge",
         "hint": "ROT13 is its own inverse.",
     },
-]
+}
 
 
 class ChallengeSubmission(BaseModel):
@@ -59,14 +59,14 @@ async def list_challenges():
             "encrypted_text": ch["encrypted_text"],
             "hint": ch["hint"],
         }
-        for ch in CHALLENGES
+        for ch in CHALLENGES.values()
     ]
 
 
 @router.get("/{challenge_id}")
 async def get_challenge(challenge_id: str):
     """Get a specific challenge."""
-    ch = next((c for c in CHALLENGES if c["id"] == challenge_id), None)
+    ch = CHALLENGES.get(challenge_id)
     if not ch:
         raise HTTPException(status_code=404, detail="Challenge not found")
     return {
@@ -85,7 +85,7 @@ async def submit_challenge(challenge_id: str, submission: ChallengeSubmission):
     """Submit an answer for a challenge."""
     await asyncio.sleep(1)  # Anti-brute-force artificial delay
 
-    ch = next((c for c in CHALLENGES if c["id"] == challenge_id), None)
+    ch = CHALLENGES.get(challenge_id)
     if not ch:
         raise HTTPException(status_code=404, detail="Challenge not found")
 
