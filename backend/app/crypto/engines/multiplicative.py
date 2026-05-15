@@ -61,13 +61,13 @@ def _mod_inverse(a: int, m: int) -> int:
         raise ValueError(f"No modular inverse: gcd({a}, {m}) != 1")
 
     # Extended Euclidean Algorithm
-    old_r, r = a, m       # remainders
-    old_s, s = 1, 0       # coefficients for 'a'
+    old_r, r = a, m  # remainders
+    old_s, s = 1, 0  # coefficients for 'a'
 
     while r != 0:
         quotient = old_r // r
-        old_r, r = r, old_r - quotient * r   # standard Euclidean step
-        old_s, s = s, old_s - quotient * s   # track the coefficient
+        old_r, r = r, old_r - quotient * r  # standard Euclidean step
+        old_s, s = s, old_s - quotient * s  # track the coefficient
 
     # old_s might be negative, so take mod m to get positive result
     return old_s % m
@@ -103,13 +103,13 @@ def encrypt(text: str, key: int = 7) -> dict:
 
     result = []
     for ch in text:
-        if 'A' <= ch <= 'Z':
+        if "A" <= ch <= "Z":
             # Map A-Z to 0-25, multiply, wrap with mod, map back
-            x = ord(ch) - ord('A')
-            result.append(chr((key * x) % ALPHABET_SIZE + ord('A')))
-        elif 'a' <= ch <= 'z':
-            x = ord(ch) - ord('a')
-            result.append(chr((key * x) % ALPHABET_SIZE + ord('a')))
+            x = ord(ch) - ord("A")
+            result.append(chr((key * x) % ALPHABET_SIZE + ord("A")))
+        elif "a" <= ch <= "z":
+            x = ord(ch) - ord("a")
+            result.append(chr((key * x) % ALPHABET_SIZE + ord("a")))
         else:
             result.append(ch)  # spaces, digits, punctuation — unchanged
 

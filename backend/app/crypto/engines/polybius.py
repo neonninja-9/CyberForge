@@ -4,6 +4,7 @@ CryptoForge Engine — Polybius Square
 A device for fractionating plaintext characters so that they can be represented by a smaller set of symbols.
 Category: Classical Ciphers | Difficulty: 2/5 | Complexity: O(n)
 """
+
 from ._base import not_implemented
 
 

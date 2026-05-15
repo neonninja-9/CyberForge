@@ -4,6 +4,7 @@ CryptoForge Engine — ROT13
 Simple letter substitution cipher replacing each letter with the 13th letter after it.
 Category: Classical Ciphers | Difficulty: 1/5 | Complexity: O(n)
 """
+
 from ._base import not_implemented
 
 

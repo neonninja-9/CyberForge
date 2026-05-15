@@ -4,6 +4,7 @@ CryptoForge Engine — Generic Hash Function
 A generic hash function stub.
 Category: Hash Functions | Difficulty: 2/5 | Complexity: O(n)
 """
+
 from ._base import not_implemented
 
 

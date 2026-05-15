@@ -28,7 +28,7 @@ async def execute_pipeline(request: PipelineRequest):
         if not algo:
             raise HTTPException(
                 status_code=400,
-                detail=f"Step {i+1}: Algorithm '{step.algorithm_id}' not found"
+                detail=f"Step {i+1}: Algorithm '{step.algorithm_id}' not found",
             )
 
         try:
@@ -44,22 +44,34 @@ async def execute_pipeline(request: PipelineRequest):
 
             # Extract the output for the next step
             output_key = next(
-                (k for k in ["ciphertext", "plaintext", "hash", "hmac", "output", "result"] if k in result),
-                None
+                (
+                    k
+                    for k in [
+                        "ciphertext",
+                        "plaintext",
+                        "hash",
+                        "hmac",
+                        "output",
+                        "result",
+                    ]
+                    if k in result
+                ),
+                None,
             )
             if output_key:
                 current_data = result[output_key]
 
-            results.append({
-                "step": i + 1,
-                "algorithm": algo["name"],
-                "result": result,
-            })
+            results.append(
+                {
+                    "step": i + 1,
+                    "algorithm": algo["name"],
+                    "result": result,
+                }
+            )
 
         except Exception as e:
             raise HTTPException(
-                status_code=400,
-                detail=f"Step {i+1} ({algo['name']}): {str(e)}"
+                status_code=400, detail=f"Step {i+1} ({algo['name']}): {str(e)}"
             )
 
     return {
