@@ -92,39 +92,29 @@ function AlgorithmPicker() {
 
 
 /* ─── Dynamic parameter builder from algorithm metadata ─── */
+const PARAM_CONFIGS = {
+  key_size: { name: 'key_size', label: 'Key Size', type: 'select', options: ['128', '192', '256'], default: '256' },
+  mode: { name: 'mode', label: 'Mode', type: 'select', options: ['ECB', 'CBC', 'CTR', 'GCM'], default: 'CBC' },
+  output_format: null, // handled by output format tabs
+  shift: { name: 'shift', label: 'Shift Value', type: 'number', default: '3' },
+  key: { name: 'key', label: 'Key', type: 'text', default: '' },
+  key1: { name: 'key1', label: 'Key 1', type: 'text', default: '' },
+  key2: { name: 'key2', label: 'Key 2', type: 'text', default: '' },
+  a: { name: 'a', label: 'Coefficient a', type: 'number', default: '5' },
+  b: { name: 'b', label: 'Coefficient b', type: 'number', default: '8' },
+  bits: { name: 'bits', label: 'Key Bits', type: 'select', options: ['1024', '2048', '4096'], default: '2048' },
+  p: { name: 'p', label: 'Prime p', type: 'number', default: '23' },
+  g: { name: 'g', label: 'Generator g', type: 'number', default: '5' },
+  private_key: { name: 'private_key', label: 'Private Key', type: 'number', default: '6' }
+};
+
 function buildParamFields(parameters) {
   return parameters.map(p => {
-    switch (p) {
-      case 'key_size':
-        return { name: 'key_size', label: 'Key Size', type: 'select', options: ['128', '192', '256'], default: '256' }
-      case 'mode':
-        return { name: 'mode', label: 'Mode', type: 'select', options: ['ECB', 'CBC', 'CTR', 'GCM'], default: 'CBC' }
-      case 'output_format':
-        return null // handled by output format tabs
-      case 'shift':
-        return { name: 'shift', label: 'Shift Value', type: 'number', default: '3' }
-      case 'key':
-        return { name: 'key', label: 'Key', type: 'text', default: '' }
-      case 'key1':
-        return { name: 'key1', label: 'Key 1', type: 'text', default: '' }
-      case 'key2':
-        return { name: 'key2', label: 'Key 2', type: 'text', default: '' }
-      case 'a':
-        return { name: 'a', label: 'Coefficient a', type: 'number', default: '5' }
-      case 'b':
-        return { name: 'b', label: 'Coefficient b', type: 'number', default: '8' }
-      case 'bits':
-        return { name: 'bits', label: 'Key Bits', type: 'select', options: ['1024', '2048', '4096'], default: '2048' }
-      case 'p':
-        return { name: 'p', label: 'Prime p', type: 'number', default: '23' }
-      case 'g':
-        return { name: 'g', label: 'Generator g', type: 'number', default: '5' }
-      case 'private_key':
-        return { name: 'private_key', label: 'Private Key', type: 'number', default: '6' }
-      default:
-        return { name: p, label: p.charAt(0).toUpperCase() + p.slice(1), type: 'text', default: '' }
+    if (Object.prototype.hasOwnProperty.call(PARAM_CONFIGS, p)) {
+      return PARAM_CONFIGS[p];
     }
-  }).filter(Boolean)
+    return { name: p, label: p.charAt(0).toUpperCase() + p.slice(1), type: 'text', default: '' };
+  }).filter(Boolean);
 }
 
 
