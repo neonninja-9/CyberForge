@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
@@ -15,7 +16,7 @@ CHALLENGES = [
         "xp": 250,
         "type": "daily",
         "encrypted_text": "Khoor Zruog! Wklv lv d vhfuhw phvvdjh.",
-        "answer": "Hello World! This is a secret message.",
+        "answer_hash": "074f512a5137dba47a9aa18d18e687d604c2d86237ae2e4a2dc861ea6e0aa1aa",
         "hint": "This is a simple shift cipher. Try different shift values.",
     },
     {
@@ -25,7 +26,7 @@ CHALLENGES = [
         "difficulty": "Easy",
         "xp": 50,
         "encrypted_text": "Wkh txlfn eurzq ira mxpsv ryhu wkh odcb grj",
-        "answer": "The quick brown fox jumps over the lazy dog",
+        "answer_hash": "05c6e08f1d9fdafa03147fcb8f82f124c76d2f70e3d989dc8aadb5e7d7450bec",
         "hint": "The shift value is less than 5.",
     },
     {
@@ -35,7 +36,7 @@ CHALLENGES = [
         "difficulty": "Easy",
         "xp": 50,
         "encrypted_text": "PelcgbSbetr",
-        "answer": "CryptoForge",
+        "answer_hash": "955a479d3c105a276536dbcef6db86fcab9d99f6c5694d472846f52f6a9be373",
         "hint": "ROT13 is its own inverse.",
     },
 ]
@@ -89,7 +90,8 @@ async def submit_challenge(challenge_id: str, submission: ChallengeSubmission):
     if not ch:
         raise HTTPException(status_code=404, detail="Challenge not found")
 
-    correct = submission.answer.strip().lower() == ch["answer"].strip().lower()
+    submission_hash = hashlib.sha256(submission.answer.strip().lower().encode()).hexdigest()
+    correct = submission_hash == ch["answer_hash"]
     return {
         "correct": correct,
         "xp_earned": ch["xp"] if correct else 0,
