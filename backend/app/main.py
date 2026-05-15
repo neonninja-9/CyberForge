@@ -52,7 +52,9 @@ _static_dir = Path(__file__).resolve().parent.parent / "static"
 
 if _static_dir.is_dir():
     # Serve JS/CSS/assets with caching headers
-    app.mount("/assets", StaticFiles(directory=_static_dir / "assets"), name="assets")
+    assets_dir = _static_dir / "assets"
+    if assets_dir.is_dir():
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
     @app.get("/{full_path:path}")
     async def spa_fallback(request: Request, full_path: str):

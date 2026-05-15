@@ -1,0 +1,107 @@
+diff --git a/backend/app/main.py b/backend/app/main.py
+index 4c6799f..bba6de4 100644
+--- a/backend/app/main.py
++++ b/backend/app/main.py
+@@ -57,8 +57,13 @@ if _static_dir.is_dir():
+     @app.get("/{full_path:path}")
+     async def spa_fallback(request: Request, full_path: str):
+         """Serve static files or fall back to index.html for SPA routes."""
+-        file_path = _static_dir / full_path
+-        if file_path.is_file():
+-            return FileResponse(file_path)
++        try:
++            file_path = (_static_dir / full_path).resolve()
++            if not file_path.is_relative_to(_static_dir.resolve()):
++                return FileResponse(_static_dir / "index.html")
++            if file_path.is_file():
++                return FileResponse(file_path)
++        except ValueError:
++            pass
+         return FileResponse(_static_dir / "index.html")
+
+diff --git a/backend/backend/static/index.html b/backend/backend/static/index.html
+new file mode 100644
+index 0000000..06621d6
+--- /dev/null
++++ b/backend/backend/static/index.html
+@@ -0,0 +1 @@
++index html content
+\ No newline at end of file
+diff --git a/backend/static/index.html b/backend/static/index.html
+new file mode 100644
+index 0000000..b6fc4c6
+--- /dev/null
++++ b/backend/static/index.html
+@@ -0,0 +1 @@
++hello
+\ No newline at end of file
+diff --git a/test_pipeline_rce.py b/test_pipeline_rce.py
+new file mode 100644
+index 0000000..f6e404d
+--- /dev/null
++++ b/test_pipeline_rce.py
+@@ -0,0 +1,15 @@
++from fastapi.testclient import TestClient
++from backend.app.main import app
++
++client = TestClient(app)
++response = client.post("/api/pipelines/execute", json={
++    "input": "hello",
++    "steps": [
++        {
++            "algorithm_id": "playfair",
++            "params": {"__import__('os').system('touch /tmp/pwned')": 1}
++        }
++    ]
++})
++print(response.status_code)
++print(response.json())
+diff --git a/test_rce.py b/test_rce.py
+new file mode 100644
+index 0000000..bca5fb0
+--- /dev/null
++++ b/test_rce.py
+@@ -0,0 +1,10 @@
++from fastapi.testclient import TestClient
++from backend.app.main import app
++
++client = TestClient(app)
++response = client.post("/api/algorithms/playfair/execute", json={
++    "input": "hello",
++    "params": {"__import__('os').system('touch /tmp/pwned')": 1}
++})
++print(response.status_code)
++print(response.json())
+diff --git a/test_traversal.py b/test_traversal.py
+new file mode 100644
+index 0000000..09bd25a
+--- /dev/null
++++ b/test_traversal.py
+@@ -0,0 +1,27 @@
++from fastapi.testclient import TestClient
++from backend.app.main import app
++import os
++from pathlib import Path
++
++# Create fake static dir and index.html so it doesn't just return 404/skip
++_static_dir = Path('./backend/static')
++os.makedirs(_static_dir, exist_ok=True)
++with open(_static_dir / 'index.html', 'w') as f:
++    f.write('index html content')
++
++client = TestClient(app)
++# Need to urlencode or just pass path traversal
++# TestClient might normalize paths. Let's make an actual request if we can.
++response = client.get("/..%2f..%2f..%2f..%2f..%2f..%2fetc%2fpasswd")
++print("Response status:", response.status_code)
++if "root" in response.text:
++    print("VULNERABLE!")
++else:
++    print("Safe:", response.text[:50])
++
++response = client.get("/../../../../../../etc/passwd")
++print("Response 2 status:", response.status_code)
++if "root" in response.text:
++    print("VULNERABLE!")
++else:
++    print("Safe 2:", response.text[:50])
