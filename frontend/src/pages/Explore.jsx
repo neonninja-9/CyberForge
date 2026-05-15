@@ -119,23 +119,14 @@ export default function Explore() {
             <div className="card-flat card-sm">
               {user ? (
                 <>
-                  <h4 className="text-subtitle-lg" style={{ marginBottom: 'var(--space-lg)' }}>Your Progress</h4>
-                  <div className="sidebar-stat">
-                    <div className="flex-between" style={{ marginBottom: 'var(--space-xs)' }}>
-                      <span className="text-body-sm">Algorithms Mastered</span>
-                      <span className="text-body-sm-bold">18 / 45</span>
+                  <h4 className="text-subtitle-lg" style={{ marginBottom: 'var(--space-md)' }}>Your Progress</h4>
+                  <div style={{ textAlign: 'center', padding: 'var(--space-sm) 0' }}>
+                    <p className="text-body-sm" style={{ color: 'var(--color-steel)' }}>
+                      Welcome back, {user?.user_metadata?.full_name || 'Explorer'}!
+                    </p>
+                    <div style={{ marginTop: 'var(--space-md)', padding: 'var(--space-sm)', backgroundColor: 'var(--color-surface-hover)', borderRadius: '8px' }}>
+                      <p className="text-caption" style={{ color: 'var(--color-primary)' }}>🚀 XP & Level tracking coming soon</p>
                     </div>
-                    <div className="progress-bar">
-                      <div className="progress-bar-fill" style={{ width: '40%' }} />
-                    </div>
-                  </div>
-                  <div className="sidebar-stat" style={{ marginTop: 'var(--space-lg)' }}>
-                    <span className="text-caption" style={{ color: 'var(--color-steel)' }}>Current Level</span>
-                    <div className="text-heading-sm" style={{ color: 'var(--color-primary)' }}>Level 7</div>
-                  </div>
-                  <div className="sidebar-stat" style={{ marginTop: 'var(--space-base)' }}>
-                    <span className="text-caption" style={{ color: 'var(--color-steel)' }}>Total XP</span>
-                    <div className="text-heading-sm">2,340 XP</div>
                   </div>
                 </>
               ) : (

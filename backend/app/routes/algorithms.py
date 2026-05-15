@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 from app.crypto.registry import ALGORITHMS
 import inspect
@@ -8,9 +8,9 @@ router = APIRouter(redirect_slashes=False)
 
 
 class ExecuteRequest(BaseModel):
-    input: str
+    input: str = Field(..., max_length=50000)
     params: dict = {}
-    output_format: str = "hex"
+    output_format: str = Field("hex", max_length=20)
 
 
 class AlgorithmCodeRequest(BaseModel):
@@ -61,13 +61,10 @@ async def execute_algorithm(algorithm_id: str, request: ExecuteRequest):
 
     try:
         fn = algo["encrypt_fn"]
-        # Build kwargs from params
-        kwargs = {}
-        for k, v in request.params.items():
-            if k in algo.get("parameters", []):
-                kwargs[k] = v
-
-        if "output_format" in algo.get("parameters", []):
+        # Build kwargs from params, strictly filtering out unexpected arguments
+        allowed_params = algo.get("parameters", [])
+        kwargs = {k: v for k, v in request.params.items() if k in allowed_params}
+        if "output_format" in allowed_params:
             kwargs["output_format"] = request.output_format
 
         # Call the function — some take 'plaintext', some take 'data', some take 'text'
@@ -86,7 +83,10 @@ async def execute_algorithm(algorithm_id: str, request: ExecuteRequest):
         return {"success": True, "algorithm": algo["name"], "result": result}
 
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        error_msg = str(e)
+        if "invalid literal" in error_msg or "unsupported operand" in error_msg or "type" in error_msg.lower():
+            error_msg = "Invalid parameter type or format provided."
+        raise HTTPException(status_code=400, detail=error_msg)
 
 
 @router.get("/{algorithm_id}/code")
