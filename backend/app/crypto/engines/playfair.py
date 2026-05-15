@@ -44,13 +44,15 @@ def _build_grid(key: str) -> list:
     return [ordered[i * GRID_SIZE:(i + 1) * GRID_SIZE] for i in range(GRID_SIZE)]
 
 
-def _find_position(grid: list, char: str) -> tuple:
-    """Find (row, col) of a character in the grid."""
+
+def _build_pos_map(grid: list) -> dict:
+    """Build a fast lookup dictionary for grid positions."""
+    pos_map = {}
     for r in range(GRID_SIZE):
         for c in range(GRID_SIZE):
-            if grid[r][c] == char:
-                return (r, c)
-    raise ValueError(f"Character '{char}' not found in grid")
+            pos_map[grid[r][c]] = (r, c)
+    return pos_map
+
 
 
 def _prepare_digraphs(text: str) -> list:
@@ -85,10 +87,10 @@ def _prepare_digraphs(text: str) -> list:
     return digraphs
 
 
-def _encrypt_pair(grid: list, a: str, b: str) -> tuple:
+def _encrypt_pair(grid: list, pos_map: dict, a: str, b: str) -> tuple:
     """Encrypt a single digraph using Playfair rules."""
-    r1, c1 = _find_position(grid, a)
-    r2, c2 = _find_position(grid, b)
+    r1, c1 = pos_map[a]
+    r2, c2 = pos_map[b]
 
     if r1 == r2:
         # Same row → shift right
@@ -101,10 +103,10 @@ def _encrypt_pair(grid: list, a: str, b: str) -> tuple:
         return grid[r1][c2], grid[r2][c1]
 
 
-def _decrypt_pair(grid: list, a: str, b: str) -> tuple:
+def _decrypt_pair(grid: list, pos_map: dict, a: str, b: str) -> tuple:
     """Decrypt a single digraph (reverse of encrypt)."""
-    r1, c1 = _find_position(grid, a)
-    r2, c2 = _find_position(grid, b)
+    r1, c1 = pos_map[a]
+    r2, c2 = pos_map[b]
 
     if r1 == r2:
         return grid[r1][(c1 - 1) % GRID_SIZE], grid[r2][(c2 - 1) % GRID_SIZE]
@@ -123,11 +125,12 @@ def encrypt(text: str, key: str = "MONARCHY") -> dict:
         key:  Keyword to build the 5×5 grid.
     """
     grid = _build_grid(key)
+    pos_map = _build_pos_map(grid)
     digraphs = _prepare_digraphs(text)
 
     encrypted_pairs = []
     for a, b in digraphs:
-        ea, eb = _encrypt_pair(grid, a, b)
+        ea, eb = _encrypt_pair(grid, pos_map, a, b)
         encrypted_pairs.append(ea + eb)
 
     ciphertext = " ".join(encrypted_pairs)
@@ -145,6 +148,7 @@ def encrypt(text: str, key: str = "MONARCHY") -> dict:
 def decrypt(ciphertext: str, key: str = "MONARCHY") -> dict:
     """Decrypt Playfair ciphertext."""
     grid = _build_grid(key)
+    pos_map = _build_pos_map(grid)
     clean = [ch for ch in ciphertext.upper() if ch.isalpha()]
 
     # Build pairs
@@ -152,7 +156,7 @@ def decrypt(ciphertext: str, key: str = "MONARCHY") -> dict:
 
     decrypted = []
     for a, b in pairs:
-        da, db = _decrypt_pair(grid, a, b)
+        da, db = _decrypt_pair(grid, pos_map, a, b)
         decrypted.append(da + db)
 
     return {
