@@ -112,4 +112,5 @@ ALGORITHM = {
     "description": "The ancient substitution cipher that shifts each letter by a fixed number of positions.",
     "parameters": ["shift"],
     "encrypt_fn": encrypt,
+    "decrypt_fn": decrypt,
 }

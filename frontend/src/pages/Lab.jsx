@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Play, Copy, RefreshCw, CheckCircle, Code2, BarChart3, BookOpen, GripVertical, ArrowLeft, Search } from 'lucide-react'
 import { Panel, Group as PanelGroup, Separator as PanelResizeHandle } from 'react-resizable-panels'
@@ -145,11 +145,33 @@ export default function Lab() {
   const [plaintext, setPlaintext] = useState('Hello, CryptoForge! This is a test message.')
   const [params, setParams] = useState({})
   const [output, setOutput] = useState('')
-  const [outputFormat, setOutputFormat] = useState('hex')
+  const [outputFormat, setOutputFormat] = useState('raw')
   const [activeTab, setActiveTab] = useState('how')
   const [isEncrypting, setIsEncrypting] = useState(false)
   const [copied, setCopied] = useState(false)
   const [execError, setExecError] = useState(null)
+  const [action, setAction] = useState('encrypt')
+
+  // Derived formatted output
+  const formattedOutput = React.useMemo(() => {
+    if (!output || typeof output !== 'string') return output;
+    if (outputFormat === 'raw') return output;
+    
+    try {
+      if (outputFormat === 'hex') {
+        return Array.from(new TextEncoder().encode(output))
+          .map(b => b.toString(16).padStart(2, '0'))
+          .join(' ');
+      }
+      if (outputFormat === 'base64') {
+        return btoa(unescape(encodeURIComponent(output)));
+      }
+    } catch (e) {
+      console.error("Format error", e);
+      return output;
+    }
+    return output;
+  }, [output, outputFormat]);
 
   // Fetch algorithm details
   useEffect(() => {
@@ -195,12 +217,12 @@ export default function Lab() {
     try {
       const result = await api.executeAlgorithm(algorithmId, {
         input: plaintext,
-        params,
+        params: { ...params, action },
         output_format: outputFormat,
       })
       // Extract meaningful output from the result
       const res = result.result || result
-      const outputVal = res.ciphertext || res.hash || res.hmac || res.output || JSON.stringify(res, null, 2)
+      const outputVal = res.ciphertext || res.plaintext || res.hash || res.hmac || res.output || JSON.stringify(res, null, 2)
       setOutput(typeof outputVal === 'string' ? outputVal : JSON.stringify(outputVal, null, 2))
     } catch (err) {
       setExecError(err.message)
@@ -209,7 +231,7 @@ export default function Lab() {
   }
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(output)
+    navigator.clipboard.writeText(formattedOutput)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -435,6 +457,26 @@ export default function Lab() {
               </div>
             )}
 
+            {/* Action Toggle */}
+            <div className="card-flat card-sm" style={{ marginBottom: 'var(--space-md)' }}>
+              <div className="pill-tabs" style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
+                <button
+                  className={`pill-tab ${action === 'encrypt' ? 'active' : ''}`}
+                  style={{ flex: 1, textAlign: 'center', justifyContent: 'center' }}
+                  onClick={() => setAction('encrypt')}
+                >
+                  Encrypt
+                </button>
+                <button
+                  className={`pill-tab ${action === 'decrypt' ? 'active' : ''}`}
+                  style={{ flex: 1, textAlign: 'center', justifyContent: 'center' }}
+                  onClick={() => setAction('decrypt')}
+                >
+                  Decrypt
+                </button>
+              </div>
+            </div>
+
             <button
               className={`btn btn-cta btn-lg btn-full ${isEncrypting ? 'encrypting' : ''}`}
               onClick={handleExecute}
@@ -444,7 +486,7 @@ export default function Lab() {
               {isEncrypting ? (
                 <><RefreshCw size={18} className="spin" /> Processing...</>
               ) : (
-                <><Play size={18} /> Execute {algo.name} →</>
+                <><Play size={18} /> {action === 'encrypt' ? 'Encrypt' : 'Decrypt'} →</>
               )}
             </button>
 
@@ -477,7 +519,7 @@ export default function Lab() {
                   </div>
                 </div>
                 <div className="code-block">
-                  <code style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>{output}</code>
+                  <code style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>{formattedOutput}</code>
                 </div>
               </div>
             )}

@@ -173,4 +173,5 @@ ALGORITHM = {
     "description": "A manual symmetric encryption technique that encrypts pairs of letters instead of single letters.",
     "parameters": ["key"],
     "encrypt_fn": encrypt,
+    "decrypt_fn": decrypt,
 }

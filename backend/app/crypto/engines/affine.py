@@ -110,4 +110,5 @@ ALGORITHM = {
     "description": "A monoalphabetic substitution cipher where each letter is mapped to its numeric equivalent, encrypted using a linear mathematical function, and converted back to a letter.",
     "parameters": ["a", "b"],
     "encrypt_fn": encrypt,
+    "decrypt_fn": decrypt,
 }

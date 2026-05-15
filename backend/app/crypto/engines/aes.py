@@ -35,4 +35,5 @@ ALGORITHM = {
     "description": "Advanced Encryption Standard with 256-bit key — the gold standard for symmetric encryption.",
     "parameters": ["key_size", "mode", "output_format"],
     "encrypt_fn": encrypt,
+    "decrypt_fn": decrypt,
 }

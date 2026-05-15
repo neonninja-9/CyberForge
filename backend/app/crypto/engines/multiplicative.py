@@ -149,4 +149,5 @@ ALGORITHM = {
     "description": "A substitution cipher where the plaintext is multiplied by a key modulo the alphabet size.",
     "parameters": ["key"],
     "encrypt_fn": encrypt,
+    "decrypt_fn": decrypt,
 }

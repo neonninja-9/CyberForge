@@ -90,4 +90,5 @@ ALGORITHM = {
     "description": "A method of encrypting alphabetic text by using a series of interwoven Caesar ciphers based on the letters of a keyword.",
     "parameters": ["key"],
     "encrypt_fn": encrypt,
+    "decrypt_fn": decrypt,
 }

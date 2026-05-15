@@ -127,4 +127,5 @@ ALGORITHM = {
     "description": "A cipher that incorporates the plaintext into the key to avoid the periodicity vulnerabilities of Vigenère.",
     "parameters": ["key"],
     "encrypt_fn": encrypt,
+    "decrypt_fn": decrypt,
 }

@@ -60,7 +60,12 @@ async def execute_algorithm(algorithm_id: str, request: ExecuteRequest):
         raise HTTPException(status_code=404, detail=f"Algorithm '{algorithm_id}' not found")
 
     try:
-        fn = algo["encrypt_fn"]
+        action = request.params.get("action", "encrypt")
+        if action == "decrypt" and "decrypt_fn" in algo:
+            fn = algo["decrypt_fn"]
+        else:
+            fn = algo["encrypt_fn"]
+            
         # Build kwargs from params, strictly filtering out unexpected arguments
         allowed_params = algo.get("parameters", [])
         kwargs = {k: v for k, v in request.params.items() if k in allowed_params}
