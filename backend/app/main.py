@@ -5,6 +5,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from anyio import to_thread
 from app.routes import algorithms, pipelines, challenges
 
 load_dotenv()
@@ -23,7 +24,7 @@ _default_origins = "http://localhost:5173,http://localhost:3000"
 allowed_origins = [
     o.strip()
     for o in os.getenv("ALLOWED_ORIGINS", _default_origins).split(",")
-    if o.strip()
+    if o.strip() and o.strip() != "*" and (o.strip().startswith("http://") or o.strip().startswith("https://"))
 ]
 
 app.add_middleware(
@@ -59,13 +60,18 @@ if _static_dir.is_dir():
     @app.get("/{full_path:path}")
     async def spa_fallback(request: Request, full_path: str):
         """Serve static files or fall back to index.html for SPA routes."""
-        try:
-            file_path = (_static_dir / full_path).resolve()
-            if not file_path.is_relative_to(_static_dir.resolve()):
-                return FileResponse(_static_dir / "index.html")
-            if file_path.is_file():
-                return FileResponse(file_path)
-        except ValueError:
-            pass
-        return FileResponse(_static_dir / "index.html")
+        def check_file():
+            try:
+                file_path = (_static_dir / full_path).resolve()
+                if not file_path.is_relative_to(_static_dir.resolve()):
+                    return None
+                if file_path.is_file():
+                    return file_path
+            except ValueError:
+                pass
+            return None
 
+        file_path = await to_thread.run_sync(check_file)
+        if file_path:
+            return FileResponse(file_path)
+        return FileResponse(_static_dir / "index.html")

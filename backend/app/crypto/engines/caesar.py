@@ -21,11 +21,11 @@ ALPHABET_SIZE = 26
 
 def _shift_char(char: str, shift: int) -> str:
     """Shift a single character by `shift` positions. Non-alpha chars pass through."""
-    if 'A' <= char <= 'Z':
+    if "A" <= char <= "Z":
         # ord('A') = 65.  Map to 0-25, shift, wrap, map back.
-        return chr((ord(char) - ord('A') + shift) % ALPHABET_SIZE + ord('A'))
-    elif 'a' <= char <= 'z':
-        return chr((ord(char) - ord('a') + shift) % ALPHABET_SIZE + ord('a'))
+        return chr((ord(char) - ord("A") + shift) % ALPHABET_SIZE + ord("A"))
+    elif "a" <= char <= "z":
+        return chr((ord(char) - ord("a") + shift) % ALPHABET_SIZE + ord("a"))
     else:
         return char  # digits, punctuation, whitespace — unchanged
 
@@ -60,7 +60,8 @@ def encrypt(plaintext: str, shift: int = 3) -> dict:
         "shift": shift,
         "input_length": len(plaintext),
         "algorithm": "Caesar Cipher",
-        "breakdown": " | ".join(breakdown[:12]) + (" ..." if len(breakdown) > 12 else ""),
+        "breakdown": " | ".join(breakdown[:12])
+        + (" ..." if len(breakdown) > 12 else ""),
     }
 
 

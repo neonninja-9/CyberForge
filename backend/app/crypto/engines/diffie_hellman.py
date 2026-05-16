@@ -28,7 +28,8 @@ First-principle implementation — no cryptographic libraries used.
 
 Category: Asymmetric | Difficulty: 4/5 | Complexity: O(n³)
 """
-import random
+
+import secrets
 
 
 def _mod_pow(base: int, exp: int, mod: int) -> int:
@@ -41,7 +42,7 @@ def _mod_pow(base: int, exp: int, mod: int) -> int:
     while exp > 0:
         if exp & 1:  # If exponent is odd, multiply into result
             result = result * base % mod
-        exp >>= 1               # Halve exponent
+        exp >>= 1  # Halve exponent
         base = base * base % mod  # Square base
     return result
 
@@ -57,7 +58,7 @@ def _is_probable_prime(n: int, k: int = 20) -> bool:
         r += 1
         d //= 2
     for _ in range(k):
-        a = random.randrange(2, n - 1)
+        a = secrets.SystemRandom().randrange(2, n - 1)
         x = _mod_pow(a, d, n)
         if x in (1, n - 1):
             continue
@@ -73,7 +74,7 @@ def _is_probable_prime(n: int, k: int = 20) -> bool:
 def _generate_prime(bits: int) -> int:
     """Generate a random prime of given bit length."""
     while True:
-        n = random.getrandbits(bits) | (1 << (bits - 1)) | 1
+        n = secrets.SystemRandom().getrandbits(bits) | (1 << (bits - 1)) | 1
         if _is_probable_prime(n):
             return n
 
@@ -101,12 +102,14 @@ def encrypt(p: int = 0, g: int = 0, private_key: int = 0) -> dict:
 
     # ── Step 2: Alice's side ──
     # Alice picks a private key and computes her public value
-    alice_private = private_key if private_key > 0 else random.randrange(2, p - 1)
+    alice_private = (
+        private_key if private_key > 0 else secrets.SystemRandom().randrange(2, p - 1)
+    )
     alice_public = _mod_pow(g, alice_private, p)  # A = g^a mod p
 
     # ── Step 3: Bob's side ──
     # Bob picks his own private key and computes his public value
-    bob_private = random.randrange(2, p - 1)
+    bob_private = secrets.SystemRandom().randrange(2, p - 1)
     bob_public = _mod_pow(g, bob_private, p)  # B = g^b mod p
 
     # ── Step 4: Shared secret computation ──

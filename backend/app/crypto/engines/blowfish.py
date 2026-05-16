@@ -4,6 +4,7 @@ CryptoForge Engine — Blowfish
 A fast, compact symmetric block cipher with variable-length key up to 448 bits.
 Category: Symmetric | Difficulty: 3/5 | Complexity: O(1)
 """
+
 from ._base import not_implemented
 
 

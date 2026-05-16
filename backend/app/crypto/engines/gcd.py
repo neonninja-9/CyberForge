@@ -4,6 +4,7 @@ CryptoForge Engine — GCD (Greatest Common Divisor)
 Calculates the greatest common divisor of two integers using the Euclidean algorithm.
 Category: Math Functions | Difficulty: 1/5 | Complexity: O(log(min(a,b)))
 """
+
 from ._base import not_implemented
 
 

@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
@@ -6,8 +7,8 @@ router = APIRouter()
 
 
 # Sample challenges (in production these would come from Supabase)
-CHALLENGES = [
-    {
+CHALLENGES = {
+    "daily-1": {
         "id": "daily-1",
         "title": "Break the Substitution Cipher",
         "description": "You've intercepted an encrypted message. Using frequency analysis, decrypt the hidden text.",
@@ -15,30 +16,30 @@ CHALLENGES = [
         "xp": 250,
         "type": "daily",
         "encrypted_text": "Khoor Zruog! Wklv lv d vhfuhw phvvdjh.",
-        "answer": "Hello World! This is a secret message.",
+        "answer_hash": "074f512a5137dba47a9aa18d18e687d604c2d86237ae2e4a2dc861ea6e0aa1aa",
         "hint": "This is a simple shift cipher. Try different shift values.",
     },
-    {
+    "c1": {
         "id": "c1",
         "title": "Decrypt the Caesar Shift",
         "description": "Given a message shifted by an unknown key, find the plaintext.",
         "difficulty": "Easy",
         "xp": 50,
         "encrypted_text": "Wkh txlfn eurzq ira mxpsv ryhu wkh odcb grj",
-        "answer": "The quick brown fox jumps over the lazy dog",
+        "answer_hash": "05c6e08f1d9fdafa03147fcb8f82f124c76d2f70e3d989dc8aadb5e7d7450bec",
         "hint": "The shift value is less than 5.",
     },
-    {
+    "c2": {
         "id": "c2",
         "title": "ROT13 Roundtrip",
         "description": "Prove that ROT13 applied twice returns the original text.",
         "difficulty": "Easy",
         "xp": 50,
         "encrypted_text": "PelcgbSbetr",
-        "answer": "CryptoForge",
+        "answer_hash": "955a479d3c105a276536dbcef6db86fcab9d99f6c5694d472846f52f6a9be373",
         "hint": "ROT13 is its own inverse.",
     },
-]
+}
 
 
 class ChallengeSubmission(BaseModel):
@@ -59,14 +60,14 @@ async def list_challenges():
             "encrypted_text": ch["encrypted_text"],
             "hint": ch["hint"],
         }
-        for ch in CHALLENGES
+        for ch in CHALLENGES.values()
     ]
 
 
 @router.get("/{challenge_id}")
 async def get_challenge(challenge_id: str):
     """Get a specific challenge."""
-    ch = next((c for c in CHALLENGES if c["id"] == challenge_id), None)
+    ch = CHALLENGES.get(challenge_id)
     if not ch:
         raise HTTPException(status_code=404, detail="Challenge not found")
     return {
@@ -85,11 +86,12 @@ async def submit_challenge(challenge_id: str, submission: ChallengeSubmission):
     """Submit an answer for a challenge."""
     await asyncio.sleep(1)  # Anti-brute-force artificial delay
 
-    ch = next((c for c in CHALLENGES if c["id"] == challenge_id), None)
+    ch = CHALLENGES.get(challenge_id)
     if not ch:
         raise HTTPException(status_code=404, detail="Challenge not found")
 
-    correct = submission.answer.strip().lower() == ch["answer"].strip().lower()
+    submission_hash = hashlib.sha256(submission.answer.strip().lower().encode()).hexdigest()
+    correct = submission_hash == ch["answer_hash"]
     return {
         "correct": correct,
         "xp_earned": ch["xp"] if correct else 0,

@@ -4,6 +4,7 @@ CryptoForge Engine — Extended Euclidean Algorithm
 Finds the GCD of two integers and the coefficients of Bézout's identity.
 Category: Math Functions | Difficulty: 3/5 | Complexity: O(log(min(a,b)))
 """
+
 from ._base import not_implemented
 
 

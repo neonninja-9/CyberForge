@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Plus, GripVertical, Trash2, Play, X, ChevronDown, ChevronUp, Search } from 'lucide-react'
+import { Plus, GripVertical, Trash2, Play, ChevronDown, ChevronUp, Search } from 'lucide-react'
 import { Panel, Group as PanelGroup, Separator as PanelResizeHandle } from 'react-resizable-panels'
 import { api } from '../lib/api'
 import './Pipelines.css'

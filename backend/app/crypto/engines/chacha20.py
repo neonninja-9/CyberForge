@@ -4,6 +4,7 @@ CryptoForge Engine — ChaCha20
 A modern stream cipher designed for high performance.
 Category: Symmetric | Difficulty: 3/5 | Complexity: O(n)
 """
+
 from ._base import not_implemented
 
 

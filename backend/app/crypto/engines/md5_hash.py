@@ -4,6 +4,7 @@ CryptoForge Engine — MD5
 A widely used, but vulnerable, cryptographic hash function producing a 128-bit hash value.
 Category: Hash Functions | Difficulty: 3/5 | Complexity: O(n)
 """
+
 from ._base import not_implemented
 
 

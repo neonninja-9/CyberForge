@@ -4,6 +4,7 @@ CryptoForge Engine — SHA-256
 Secure Hash Algorithm producing a 256-bit digest.
 Category: Hash Functions | Difficulty: 3/5 | Complexity: O(n)
 """
+
 from ._base import not_implemented
 
 
