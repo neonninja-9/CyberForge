@@ -79,15 +79,15 @@ def _pad_message(message_bytes: bytes) -> bytes:
     original_length_bits = len(message_bytes) * 8
 
     # Step 1: Append the 0x80 byte
-    message_bytes += b'\x80'
+    message_bytes += b"\x80"
 
     # Step 2: Pad with zeros until length ≡ 56 mod 64
     # We need (current_length % 64) == 56
     while len(message_bytes) % 64 != 56:
-        message_bytes += b'\x00'
+        message_bytes += b"\x00"
 
     # Step 3: Append original length as 64-bit big-endian
-    message_bytes += original_length_bits.to_bytes(8, byteorder='big')
+    message_bytes += original_length_bits.to_bytes(8, byteorder="big")
 
     return message_bytes
 
@@ -101,14 +101,14 @@ def _sha1_compress(block: bytes, h0: int, h1: int, h2: int, h3: int, h4: int) ->
     # ── Step A: Parse block into 16 × 32-bit big-endian words ──
     W = []
     for i in range(16):
-        word = int.from_bytes(block[i*4:(i+1)*4], byteorder='big')
+        word = int.from_bytes(block[i * 4 : (i + 1) * 4], byteorder="big")
         W.append(word)
 
     # ── Step B: Extend from 16 words to 80 words ──
     # Each new word is derived from four previous words, XORed and rotated.
     # This "diffuses" small input changes across all 80 rounds.
     for i in range(16, 80):
-        W.append(_left_rotate(W[i-3] ^ W[i-8] ^ W[i-14] ^ W[i-16], 1))
+        W.append(_left_rotate(W[i - 3] ^ W[i - 8] ^ W[i - 14] ^ W[i - 16], 1))
 
     # ── Step C: Initialize working variables from current hash state ──
     a, b, c, d, e = h0, h1, h2, h3, h4
@@ -161,7 +161,7 @@ def sha1_hash(data: str) -> str:
     Returns a 40-character hexadecimal digest (160 bits).
     """
     # Convert string to bytes
-    message = data.encode('utf-8')
+    message = data.encode("utf-8")
 
     # Pad message to multiple of 512 bits
     padded = _pad_message(message)
@@ -171,11 +171,11 @@ def sha1_hash(data: str) -> str:
 
     # Process each 512-bit (64-byte) block
     for offset in range(0, len(padded), 64):
-        block = padded[offset:offset + 64]
+        block = padded[offset : offset + 64]
         h0, h1, h2, h3, h4 = _sha1_compress(block, h0, h1, h2, h3, h4)
 
     # Concatenate the five 32-bit hash values into a 160-bit digest
-    digest = ''.join(f'{x:08x}' for x in [h0, h1, h2, h3, h4])
+    digest = "".join(f"{x:08x}" for x in [h0, h1, h2, h3, h4])
     return digest
 
 

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Flame, Clock, Trophy, ArrowRight, CheckCircle, BarChart3 } from 'lucide-react'
+
+import { Flame, Clock, ArrowRight, CheckCircle } from 'lucide-react'
 import './Challenges.css'
 
 const challenges = [

@@ -4,6 +4,7 @@ CryptoForge Engine — HMAC-SHA256
 Hash-based Message Authentication Code providing data integrity.
 Category: Hash Functions | Difficulty: 2/5 | Complexity: O(n)
 """
+
 from ._base import not_implemented
 
 

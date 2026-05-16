@@ -4,6 +4,7 @@ CryptoForge Engine — DES
 Data Encryption Standard - a legacy symmetric-key method of data encryption.
 Category: Symmetric | Difficulty: 3/5 | Complexity: O(1) per block
 """
+
 from ._base import not_implemented
 
 

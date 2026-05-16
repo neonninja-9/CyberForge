@@ -35,8 +35,8 @@ def encrypt(text: str, key: str = "SECRET") -> dict:
 
     for ch in text:
         if ch.isalpha():
-            shift = ord(key[key_index % len(key)]) - ord('A')
-            base = ord('A') if ch.isupper() else ord('a')
+            shift = ord(key[key_index % len(key)]) - ord("A")
+            base = ord("A") if ch.isupper() else ord("a")
             encrypted = chr((ord(ch) - base + shift) % ALPHABET_SIZE + base)
             result.append(encrypted)
             key_index += 1
@@ -64,8 +64,8 @@ def decrypt(ciphertext: str, key: str = "SECRET") -> dict:
 
     for ch in ciphertext:
         if ch.isalpha():
-            shift = ord(key[key_index % len(key)]) - ord('A')
-            base = ord('A') if ch.isupper() else ord('a')
+            shift = ord(key[key_index % len(key)]) - ord("A")
+            base = ord("A") if ch.isupper() else ord("a")
             decrypted = chr((ord(ch) - base - shift) % ALPHABET_SIZE + base)
             result.append(decrypted)
             key_index += 1

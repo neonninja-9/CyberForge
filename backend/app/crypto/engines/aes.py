@@ -4,13 +4,13 @@ CryptoForge Engine — AES-256
 Advanced Encryption Standard with 256-bit key — the gold standard for symmetric encryption.
 Category: Symmetric | Difficulty: 4/5 | Complexity: O(1) per block
 """
-import os
-import base64
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.primitives import padding
-from cryptography.hazmat.backends import default_backend
 
-def encrypt(plaintext: str, key_size: int = 256, mode: str = "CBC", output_format: str = "hex") -> dict:
+from ._base import not_implemented
+
+
+def encrypt(
+    plaintext: str, key_size: int = 256, mode: str = "CBC", output_format: str = "hex"
+) -> dict:
     """
     Implement AES-256 logic here.
 
@@ -114,9 +114,14 @@ def encrypt(plaintext: str, key_size: int = 256, mode: str = "CBC", output_forma
     else:
         raise ValueError(f"Unsupported mode: {mode}")
 
-def decrypt(ciphertext_hex: str, key_hex: str, mode: str = "CBC",
-            iv_hex: str = None, nonce_hex: str = None, tag_hex: str = None,
-            input_format: str = "hex") -> dict:
+def decrypt(
+    ciphertext_hex: str,
+    key_hex: str,
+    mode: str = "CBC",
+    iv_hex: str = None,
+    nonce_hex: str = None,
+    tag_hex: str = None,
+) -> dict:
     """Implement AES decryption logic here."""
     try:
         def decode_val(val: str) -> bytes:
@@ -177,6 +182,7 @@ def decrypt(ciphertext_hex: str, key_hex: str, mode: str = "CBC",
         return {"error": str(e), "algorithm": "AES"}
     except Exception as e:
         return {"error": f"Decryption failed: {str(e)}", "algorithm": "AES"}
+
 
 # ─── Algorithm Registration ─────────────────────────────────────────────────
 # This dict is auto-discovered by the engine loader. Just define it and the

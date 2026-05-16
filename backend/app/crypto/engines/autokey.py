@@ -46,11 +46,11 @@ def encrypt(text: str, key: str = "SECRET") -> dict:
     for ch in text:
         if ch.isalpha():
             # Get the shift from the current key stream position
-            k = ord(key_stream[alpha_index]) - ord('A')
+            k = ord(key_stream[alpha_index]) - ord("A")
 
             # Preserve original case
-            base = ord('A') if ch.isupper() else ord('a')
-            plain_val = ord(ch.upper()) - ord('A')
+            base = ord("A") if ch.isupper() else ord("a")
+            plain_val = ord(ch.upper()) - ord("A")
 
             # Encrypt: E(p) = (p + k) mod 26
             encrypted = chr((plain_val + k) % ALPHABET_SIZE + base)
@@ -69,7 +69,8 @@ def encrypt(text: str, key: str = "SECRET") -> dict:
     return {
         "ciphertext": ciphertext,
         "primer": key,
-        "full_key_preview": "".join(key_stream[:20]) + ("..." if len(key_stream) > 20 else ""),
+        "full_key_preview": "".join(key_stream[:20])
+        + ("..." if len(key_stream) > 20 else ""),
         "algorithm": "Autokey Cipher",
     }
 
@@ -92,11 +93,11 @@ def decrypt(ciphertext: str, key: str = "SECRET") -> dict:
     for ch in ciphertext:
         if ch.isalpha():
             # Get shift from key stream
-            k = ord(key_stream[alpha_index]) - ord('A')
+            k = ord(key_stream[alpha_index]) - ord("A")
 
             # Preserve original case
-            base = ord('A') if ch.isupper() else ord('a')
-            cipher_val = ord(ch.upper()) - ord('A')
+            base = ord("A") if ch.isupper() else ord("a")
+            cipher_val = ord(ch.upper()) - ord("A")
 
             # Decrypt: D(c) = (c - k) mod 26
             plain_val = (cipher_val - k) % ALPHABET_SIZE
@@ -104,7 +105,7 @@ def decrypt(ciphertext: str, key: str = "SECRET") -> dict:
             result.append(decrypted)
 
             # Extend key stream with the RECOVERED plaintext letter
-            key_stream.append(chr(plain_val + ord('A')))
+            key_stream.append(chr(plain_val + ord("A")))
             alpha_index += 1
         else:
             result.append(ch)

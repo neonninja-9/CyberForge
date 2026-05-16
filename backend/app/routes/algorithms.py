@@ -1,8 +1,16 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-from typing import Optional
 from app.crypto.registry import ALGORITHMS
 import inspect
+from functools import lru_cache
+
+
+@lru_cache(maxsize=None)
+def _get_first_param_name(fn):
+    sig = inspect.signature(fn)
+    param_names = list(sig.parameters.keys())
+    return param_names[0] if param_names else None
+
 
 router = APIRouter(redirect_slashes=False)
 
@@ -40,7 +48,9 @@ async def get_algorithm(algorithm_id: str):
     """Get details of a specific algorithm."""
     algo = ALGORITHMS.get(algorithm_id)
     if not algo:
-        raise HTTPException(status_code=404, detail=f"Algorithm '{algorithm_id}' not found")
+        raise HTTPException(
+            status_code=404, detail=f"Algorithm '{algorithm_id}' not found"
+        )
     return {
         "id": algo["id"],
         "name": algo["name"],
@@ -57,7 +67,9 @@ async def execute_algorithm(algorithm_id: str, request: ExecuteRequest):
     """Execute a cryptographic algorithm on the given input."""
     algo = ALGORITHMS.get(algorithm_id)
     if not algo:
-        raise HTTPException(status_code=404, detail=f"Algorithm '{algorithm_id}' not found")
+        raise HTTPException(
+            status_code=404, detail=f"Algorithm '{algorithm_id}' not found"
+        )
 
     try:
         action = request.params.get("action", "encrypt")
@@ -65,7 +77,7 @@ async def execute_algorithm(algorithm_id: str, request: ExecuteRequest):
             fn = algo["decrypt_fn"]
         else:
             fn = algo["encrypt_fn"]
-            
+
         # Build kwargs from params, strictly filtering out unexpected arguments
         allowed_params = algo.get("parameters", [])
         kwargs = {k: v for k, v in request.params.items() if k in allowed_params}
@@ -73,9 +85,7 @@ async def execute_algorithm(algorithm_id: str, request: ExecuteRequest):
             kwargs["output_format"] = request.output_format
 
         # Call the function — some take 'plaintext', some take 'data', some take 'text'
-        sig = inspect.signature(fn)
-        param_names = list(sig.parameters.keys())
-        first_param = param_names[0] if param_names else None
+        first_param = _get_first_param_name(fn)
 
         if first_param in ("plaintext", "data", "text"):
             result = fn(request.input, **kwargs)
@@ -89,7 +99,11 @@ async def execute_algorithm(algorithm_id: str, request: ExecuteRequest):
 
     except Exception as e:
         error_msg = str(e)
-        if "invalid literal" in error_msg or "unsupported operand" in error_msg or "type" in error_msg.lower():
+        if (
+            "invalid literal" in error_msg
+            or "unsupported operand" in error_msg
+            or "type" in error_msg.lower()
+        ):
             error_msg = "Invalid parameter type or format provided."
         raise HTTPException(status_code=400, detail=error_msg)
 
@@ -99,7 +113,9 @@ async def get_algorithm_code(algorithm_id: str):
     """Get the Python source code of a cryptographic algorithm."""
     algo = ALGORITHMS.get(algorithm_id)
     if not algo:
-        raise HTTPException(status_code=404, detail=f"Algorithm '{algorithm_id}' not found")
+        raise HTTPException(
+            status_code=404, detail=f"Algorithm '{algorithm_id}' not found"
+        )
 
     try:
         source = inspect.getsource(algo["encrypt_fn"])

@@ -64,3 +64,5 @@ Thumbs.db
 # Documentation
 DESIGN.md
 backend/app/crypto/changes.md
+venv_exact/
+venv/
