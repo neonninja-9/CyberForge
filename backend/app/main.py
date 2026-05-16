@@ -24,7 +24,7 @@ _default_origins = "http://localhost:5173,http://localhost:3000"
 allowed_origins = [
     o.strip()
     for o in os.getenv("ALLOWED_ORIGINS", _default_origins).split(",")
-    if o.strip()
+    if o.strip() and o.strip() != "*" and (o.strip().startswith("http://") or o.strip().startswith("https://"))
 ]
 
 app.add_middleware(
